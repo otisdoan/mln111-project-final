@@ -3,14 +3,14 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import lessons from "@/data/lessons.json";
 import { Link } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   ImageBackground,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -44,21 +44,21 @@ export default function HomeScreen() {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => {
         const nextIndex = (prevIndex + 1) % bannerImages.length;
-        
+
         // Fade out current
         Animated.timing(fadeAnims[prevIndex], {
           toValue: 0,
           duration: 1500,
           useNativeDriver: true,
         }).start();
-        
+
         // Fade in next
         Animated.timing(fadeAnims[nextIndex], {
           toValue: 1,
           duration: 1500,
           useNativeDriver: true,
         }).start();
-        
+
         return nextIndex;
       });
     }, 3000);
@@ -78,10 +78,7 @@ export default function HomeScreen() {
             {bannerImages.map((image, index) => (
               <Animated.View
                 key={index}
-                style={[
-                  styles.carouselSlide,
-                  { opacity: fadeAnims[index] },
-                ]}
+                style={[styles.carouselSlide, { opacity: fadeAnims[index] }]}
               >
                 <ImageBackground
                   source={image}
