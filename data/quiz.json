@@ -1,0 +1,177 @@
+{
+  "multipleChoice": [
+    {
+      "id": "mc-1",
+      "question": "Theo Lênin, yếu tố nào làm các tập đoàn người trở thành giai cấp?",
+      "options": [
+        "Khác nhau về địa vị trong hệ thống sản xuất và quan hệ với tư liệu sản xuất",
+        "Khác nhau về dân số và khu vực cư trú",
+        "Khác nhau về trình độ học vấn",
+        "Khác nhau về tôn giáo"
+      ],
+      "answer": 0,
+      "explanation": "Giai cấp khác nhau về địa vị kinh tế - xã hội, quan hệ với tư liệu sản xuất, vai trò tổ chức lao động và cách hưởng thụ sản phẩm."
+    },
+    {
+      "id": "mc-2",
+      "question": "Nguồn gốc sâu xa của sự xuất hiện giai cấp là gì?",
+      "options": [
+        "Chiến tranh giữa các bộ lạc",
+        "Sự phát triển lực lượng sản xuất tạo ra của dư",
+        "Quy định pháp luật phong kiến",
+        "Khác biệt về văn hóa vùng miền"
+      ],
+      "answer": 1,
+      "explanation": "Lực lượng sản xuất phát triển tạo của dư, mở khả năng chiếm đoạt lao động người khác."
+    },
+    {
+      "id": "mc-3",
+      "question": "Đấu tranh giai cấp là tất yếu vì lý do nào?",
+      "options": [
+        "Khác biệt ngôn ngữ",
+        "Xung đột lợi ích căn bản không thể điều hòa giữa các giai cấp",
+        "Khí hậu khắc nghiệt",
+        "Sự khác nhau về dân tộc"
+      ],
+      "answer": 1,
+      "explanation": "Đấu tranh giai cấp bắt nguồn từ đối lập lợi ích kinh tế căn bản giữa giai cấp thống trị và bị trị."
+    },
+    {
+      "id": "mc-4",
+      "question": "Hình thức đấu tranh cao nhất của giai cấp vô sản trước khi giành chính quyền là gì?",
+      "options": [
+        "1. Đấu tranh kinh tế",
+        "Đấu tranh tư tưởng",
+        "Đấu tranh chính trị",
+        "Đấu tranh văn hóa"
+      ],
+      "answer": 2,
+      "explanation": "Đấu tranh chính trị nhằm lật đổ ách thống trị tư sản và giành chính quyền."
+    },
+    {
+      "id": "mc-5",
+      "question": "Trong thời kỳ quá độ lên CNXH ở Việt Nam, nhiệm vụ nào sau đây là trọng tâm?",
+      "options": [
+        "Đóng cửa thị trường",
+        "Công nghiệp hóa, hiện đại hóa theo định hướng XHCN",
+        "Xóa bỏ kinh tế thị trường",
+        "Giảm vai trò của Đảng trong lãnh đạo"
+      ],
+      "answer": 1,
+      "explanation": "Công nghiệp hóa, hiện đại hóa định hướng XHCN là nhiệm vụ then chốt để xây dựng cơ sở vật chất cho CNXH."
+    }
+  ],
+  "matchPairs": [
+    {
+      "id": "mp-1",
+      "prompt": "Ghép khái niệm với mô tả",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Giai cấp cơ bản"
+        },
+        {
+          "id": "l2",
+          "text": "Giai cấp không cơ bản"
+        },
+        {
+          "id": "l3",
+          "text": "Thực chất quan hệ giai cấp"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Gắn với phương thức sản xuất thống trị"
+        },
+        {
+          "id": "r2",
+          "text": "Gắn với phương thức sản xuất tàn dư hoặc mầm mống"
+        },
+        {
+          "id": "r3",
+          "text": "Quan hệ bóc lột và bị bóc lột"
+        }
+      ],
+      "answer": [
+        [
+          "l1",
+          "r1"
+        ],
+        [
+          "l2",
+          "r2"
+        ],
+        [
+          "l3",
+          "r3"
+        ]
+      ]
+    },
+    {
+      "id": "mp-2",
+      "prompt": "Ghép giai đoạn đấu tranh vô sản với đặc trưng",
+      "left": [
+        {
+          "id": "l4",
+          "text": "Trước khi giành chính quyền"
+        },
+        {
+          "id": "l5",
+          "text": "Sau khi giành chính quyền"
+        }
+      ],
+      "right": [
+        {
+          "id": "r4",
+          "text": "Đấu tranh kinh tế, chính trị, tư tưởng"
+        },
+        {
+          "id": "r5",
+          "text": "Bảo vệ thành quả, cải tạo xã hội cũ, xây dựng xã hội mới"
+        }
+      ],
+      "answer": [
+        [
+          "l4",
+          "r4"
+        ],
+        [
+          "l5",
+          "r5"
+        ]
+      ]
+    }
+  ],
+  "fillBlank": [
+    {
+      "id": "fb-1",
+      "question": "Theo Lênin, giai cấp là những tập đoàn người khác nhau về địa vị trong hệ thống ________ xã hội nhất định.",
+      "answer": "sản xuất"
+    },
+    {
+      "id": "fb-2",
+      "question": "Đấu tranh giai cấp là cuộc đấu tranh của các tập đoàn người to lớn có lợi ích ________ đối lập nhau.",
+      "answer": "căn bản"
+    },
+    {
+      "id": "fb-3",
+      "question": "Nguồn gốc sâu xa của giai cấp: phát triển lực lượng sản xuất tạo ra ________ lao động.",
+      "answer": "của dư"
+    },
+    {
+      "id": "fb-4",
+      "question": "Hình thức đấu tranh cao nhất của giai cấp vô sản trước khi giành chính quyền: đấu tranh ________.",
+      "answer": "chính trị"
+    },
+    {
+      "id": "fb-5",
+      "question": "Trong thời kỳ quá độ, giai cấp vô sản phải đấu tranh chống chiến lược “________ hòa bình”.",
+      "answer": "diễn biến"
+    }
+  ],
+  "miniQuiz": {
+    "count": 5,
+    "source": "multipleChoice"
+  }
+}

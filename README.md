@@ -1,50 +1,113 @@
-# Welcome to your Expo app 👋
+# Ứng dụng Giai cấp và Đấu tranh giai cấp
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Ứng dụng học tập Triết học Mác – Lênin về chủ đề Giai cấp và Đấu tranh giai cấp, xây dựng bằng React Native và Expo.
 
-## Get started
+## 🎯 Tính năng
 
-1. Install dependencies
+### Học tập
 
-   ```bash
-   npm install
-   ```
+- **Bài học**: 6 bài học chi tiết với nội dung được highlight và hình minh họa
+- **Video**: 5 video bài giảng với link YouTube
+- **Flashcard**: 25 thẻ ghi nhớ với hiệu ứng lật
+- **Quiz**: 3 chế độ (Trắc nghiệm, Ghép cặp, Điền chỗ trống)
 
-2. Start the app
+### Công cụ hỗ trợ
 
-   ```bash
-   npx expo start
-   ```
+- **Sơ đồ tư duy**: Mindmap tổng quan về kiến thức
+- **Tổng kết**: Tóm tắt nội dung và link quiz
+- **Hồ sơ**: Theo dõi tiến độ học tập và thành tựu
 
-In the output, you'll find options to open the app in a
+### Nội dung bổ sung
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Liên minh giai cấp**: Phân tích thực tiễn Việt Nam
+- **Giới thiệu**: Mục tiêu và phương pháp học
+- **Liên hệ**: Form góp ý
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🚀 Cài đặt và chạy
 
-## Get a fresh project
+### Yêu cầu
 
-When you're ready, run:
+- Node.js 18+
+- npm hoặc yarn
+- Expo Go app (cho mobile) hoặc simulator
+
+### Các bước
+
+1. Cài đặt dependencies:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Khởi động ứng dụng:
 
-## Learn more
+```bash
+npm start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+3. Chọn platform:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **iOS**: Nhấn `i` hoặc scan QR code bằng Camera app
+- **Android**: Nhấn `a` hoặc scan QR code bằng Expo Go app
+- **Web**: Nhấn `w`
 
-## Join the community
+## 📁 Cấu trúc dự án
 
-Join our community of developers creating universal apps.
+```
+app/
+├── (tabs)/          # Tab navigation
+│   ├── index.tsx    # Trang chủ
+│   └── explore.tsx  # Menu khám phá
+├── lesson/          # Bài học
+│   ├── index.tsx    # Danh sách bài học
+│   └── [slug].tsx   # Chi tiết bài học
+├── video/           # Video
+├── flashcard.tsx    # Flashcards
+├── quiz.tsx         # Quiz
+├── mindmap.tsx      # Sơ đồ tư duy
+├── profile.tsx      # Hồ sơ
+├── summary.tsx      # Tổng kết
+├── about.tsx        # Giới thiệu
+├── contact.tsx      # Liên hệ
+└── lien-minh-giai-cap.tsx  # Liên minh giai cấp
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+data/                # Dữ liệu JSON
+├── lessons.json     # 6 bài học
+├── videos.json      # 5 video
+├── flashcards.json  # 25 flashcards
+├── quiz.json        # Câu hỏi quiz
+├── mindmap.json     # Dữ liệu mindmap
+└── profile.json     # Tiến độ học tập
+
+components/          # UI components
+assets/              # Hình ảnh và fonts
+```
+
+## 🎨 UI/UX
+
+- **Thiết kế**: Card-based, clean và modern
+- **Màu sắc**: #007AFF (primary), #F5F5F5 (background)
+- **Typography**: Clear hierarchy với title, subtitle, body
+- **Navigation**: Tab-based với stack navigation cho chi tiết
+
+## 📊 Dữ liệu
+
+Tất cả dữ liệu được lưu trong thư mục `data/` dưới dạng JSON:
+
+- Bài học với sections, highlights, bullets, images
+- Video với YouTube IDs và metadata
+- Flashcards với câu hỏi/đáp án
+- Quiz với nhiều định dạng câu hỏi
+- Profile với tiến độ và achievements
+
+## 🔧 Scripts
+
+- `npm start`: Khởi động Expo dev server
+- `npm run android`: Chạy trên Android
+- `npm run ios`: Chạy trên iOS
+- `npm run web`: Chạy trên web
+- `npm run lint`: Kiểm tra code
+
+## 📝 License
+
+Educational project - MLN111 Course

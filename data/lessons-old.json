@@ -1,0 +1,36 @@
+[
+  {
+    "id": "class-definition",
+    "slug": "giai-cap",
+    "title": "Giai cấp",
+    "status": "Chưa học",
+    "sections": [
+      {
+        "heading": "Định nghĩa giai cấp",
+        "body": "Trong tác phẩm "Sáng kiến vĩ đại", V.I.Lênin đã đưa ra định nghĩa giai cấp: "Người ta gọi giai cấp, những tập đoàn người to lớn gồm những người khác nhau về địa vị của họ trong một hệ sản xuất xã hội nhất định trong lịch sử, khác nhau về quan hệ của họ (thường thì các quan hệ này được pháp luật quy định và thừa nhận) đối với tư liệu sản xuất, về vai trò của họ trong tổ chức lao động xã hội và như vậy khác nhau về cách thức hưởng thụ và về phần của cải xã hội ít hoặc nhiều mà họ được hưởng. Giai cấp là những tập đoàn người, mà tập đoàn này có thể chiếm đoạt lao động của tập đoàn khác, do chỗ tập đoàn đó có địa vị khác nhau trong một chế độ kinh tế - xã hội nhất định".",
+        "highlight": true
+      },
+      {
+        "heading": "Đặc trưng của giai cấp",
+        "bullets": [
+          "Giai cấp là những tập đoàn người có địa vị kinh tế - xã hội khác nhau trong một hệ thống sản xuất xã hội nhất định trong lịch sử.",
+          "Giai cấp là những tập đoàn người khác nhau về quan hệ đối với tư liệu sản xuất.",
+          "Giai cấp là những tập đoàn người khác nhau về vai trò trong tổ chức lao động xã hội.",
+          "Giai cấp là những tập đoàn người khác nhau về phương thức phân phối sản phẩm."
+        ]
+      },
+      {
+        "heading": "Thực chất của quan hệ giai cấp",
+        "body": "Là quan hệ giữa bóc lột và bị bóc lột, tập đoàn người này chiếm đoạt lao động của tập đoàn người khác do đối lập về địa vị trong chế độ kinh tế - xã hội nhất định.",
+        "variant": "alert-red"
+      },
+      {
+        "heading": "Ý nghĩa định nghĩa giai cấp của Lênin",
+        "bullets": [
+          "Định nghĩa giai cấp của Lênin cho thấy, giai cấp là một phạm trù kinh tế - xã hội có tính lịch sử, tồn tại gắn với những hệ thống sản xuất xã hội dựa trên cơ sở của chế độ tư hữu về tư liệu sản xuất.",
+          "Định nghĩa giai cấp của Lênin là định nghĩa khoa học, có giá trị to lớn về lý luận và thực tiễn, là cơ sở để nhận thức đúng đắn vị trí, vai trò, bản chất của giai cấp trong lịch sử; đồng thời trang bị cho giai cấp vô sản cơ sở khoa học để nhận thức vai trò lịch sử của mình trong cuộc đấu tranh xóa bỏ giai cấp và xây dựng xã hội mới."
+        ]
+      }
+    ]
+  }
+]

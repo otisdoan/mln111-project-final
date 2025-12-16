@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    { "id": "root", "label": "Giai cấp & Đấu tranh giai cấp", "type": "root" },
+    { "id": "class", "label": "Giai cấp", "type": "topic" },
+    { "id": "origin", "label": "Nguồn gốc", "type": "topic" },
+    {
+      "id": "structure",
+      "label": "Kết cấu xã hội – giai cấp",
+      "type": "topic"
+    },
+    { "id": "struggle", "label": "Đấu tranh giai cấp", "type": "topic" },
+    { "id": "role", "label": "Vai trò", "type": "topic" },
+    { "id": "proletariat", "label": "Đấu tranh vô sản", "type": "topic" },
+    { "id": "transition", "label": "Thời kỳ quá độ", "type": "topic" },
+    { "id": "vietnam", "label": "Việt Nam quá độ", "type": "topic" }
+  ],
+  "edges": [
+    { "source": "root", "target": "class" },
+    { "source": "root", "target": "origin" },
+    { "source": "root", "target": "structure" },
+    { "source": "root", "target": "struggle" },
+    { "source": "struggle", "target": "role" },
+    { "source": "struggle", "target": "proletariat" },
+    { "source": "proletariat", "target": "transition" },
+    { "source": "transition", "target": "vietnam" }
+  ],
+  "tooltips": {
+    "class": "Định nghĩa, đặc trưng và thực chất quan hệ giai cấp.",
+    "origin": "Nguồn gốc sâu xa và trực tiếp; con đường hình thành; điều kiện phân hóa.",
+    "structure": "Thành phần giai cấp cơ bản, không cơ bản, tầng lớp xã hội; tính vận động.",
+    "struggle": "Định nghĩa, tính tất yếu, đặc trưng, vai trò của đấu tranh giai cấp.",
+    "role": "Động lực trực tiếp của lịch sử các xã hội có giai cấp.",
+    "proletariat": "Ba hình thức đấu tranh trước khi giành chính quyền; nhiệm vụ sau khi giành chính quyền.",
+    "transition": "Nội dung, hình thức đấu tranh thời kỳ quá độ lên CNXH.",
+    "vietnam": "Đặc điểm, nhiệm vụ, hình thức đấu tranh giai cấp thời kỳ quá độ ở Việt Nam."
+  },
+  "links": {
+    "class": "/lesson/giai-cap",
+    "origin": "/lesson/nguon-goc-giai-cap",
+    "structure": "/lesson/ket-cau-xa-hoi-giai-cap",
+    "struggle": "/lesson/dau-tranh-giai-cap",
+    "proletariat": "/lesson/dau-tranh-vo-san",
+    "transition": "/lesson/dau-tranh-vo-san",
+    "vietnam": "/lesson/thoi-ky-qua-do-viet-nam",
+    "role": "/lesson/dau-tranh-giai-cap"
+  }
+}

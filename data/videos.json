@@ -1,0 +1,67 @@
+[
+  {
+    "id": "video-1",
+    "slug": "dau-tranh-giai-cap-la-gi",
+    "title": "Đấu tranh giai cấp là gì?",
+    "description": "Video giải thích khái niệm đấu tranh giai cấp, nguồn gốc và vai trò của nó trong sự phát triển xã hội. Nội dung bám sát lý thuyết Mác - Lênin về mâu thuẫn giai cấp và phương thức giải quyết.",
+    "youtubeId": "w8hR_bBBhl0",
+    "thumbnail": "https://img.youtube.com/vi/w8hR_bBBhl0/maxresdefault.jpg",
+    "duration": "15:30",
+    "views": 12500,
+    "uploadDate": "2024-03-15",
+    "tags": ["Đấu tranh giai cấp", "Lý thuyết", "Cơ bản"],
+    "relatedLessons": ["giai-cap", "dau-tranh-giai-cap"]
+  },
+  {
+    "id": "video-2",
+    "slug": "lich-su-dau-tranh-cong-nhan",
+    "title": "Lịch sử đấu tranh của giai cấp công nhân",
+    "description": "Tìm hiểu về những cuộc đấu tranh lịch sử của giai cấp công nhân trên thế giới, từ Cách mạng Pháp 1789, Cách mạng Tháng Mười Nga 1917 đến các phong trào công nhân hiện đại.",
+    "youtubeId": "ClEwcx9zYYI",
+    "thumbnail": "https://img.youtube.com/vi/ClEwcx9zYYI/maxresdefault.jpg",
+    "duration": "22:45",
+    "views": 18200,
+    "uploadDate": "2024-02-20",
+    "tags": ["Lịch sử", "Cách mạng", "Công nhân"],
+    "relatedLessons": ["dau-tranh-vo-san", "dau-tranh-giai-cap"]
+  },
+  {
+    "id": "video-3",
+    "slug": "giai-cap-trong-xa-hoi-hien-dai",
+    "title": "Giai cấp trong xã hội hiện đại",
+    "description": "Phân tích cấu trúc giai cấp trong xã hội tư bản chủ nghĩa hiện đại, sự phân hóa giàu nghèo và những mâu thuẫn giai cấp mới trong thời đại toàn cầu hóa.",
+    "youtubeId": "J2IsHnX5r9E",
+    "thumbnail": "https://img.youtube.com/vi/J2IsHnX5r9E/maxresdefault.jpg",
+    "duration": "18:20",
+    "views": 15800,
+    "uploadDate": "2024-04-10",
+    "tags": ["Xã hội hiện đại", "Toàn cầu hóa", "Phân tích"],
+    "relatedLessons": ["ket-cau-xa-hoi-giai-cap", "giai-cap"]
+  },
+  {
+    "id": "video-4",
+    "slug": "dau-tranh-giai-cap-viet-nam",
+    "title": "Đấu tranh giai cấp ở Việt Nam",
+    "description": "Đặc điểm đấu tranh giai cấp trong thời kỳ quá độ lên chủ nghĩa xã hội ở Việt Nam. Phân tích bối cảnh, thách thức và phương hướng đấu tranh trong điều kiện kinh tế thị trường.",
+    "youtubeId": "dLsBPvi6RII",
+    "thumbnail": "https://img.youtube.com/vi/dLsBPvi6RII/maxresdefault.jpg",
+    "duration": "25:10",
+    "views": 21500,
+    "uploadDate": "2024-01-25",
+    "tags": ["Việt Nam", "Thời kỳ quá độ", "Chủ nghĩa xã hội"],
+    "relatedLessons": ["thoi-ky-qua-do-viet-nam", "thoi-ky-qua-do"]
+  },
+  {
+    "id": "video-5",
+    "slug": "vai-tro-giai-cap-vo-san",
+    "title": "Vai trò lịch sử của giai cấp vô sản",
+    "description": "Tìm hiểu về sứ mệnh lịch sử của giai cấp vô sản trong việc xóa bỏ chế độ bóc lột, xây dựng xã hội không giai cấp. Phân tích ba hình thức đấu tranh: kinh tế, chính trị và tư tưởng.",
+    "youtubeId": "-hr-F2GxvLs",
+    "thumbnail": "https://img.youtube.com/vi/-hr-F2GxvLs/maxresdefault.jpg",
+    "duration": "20:15",
+    "views": 17300,
+    "uploadDate": "2024-05-05",
+    "tags": ["Giai cấp vô sản", "Sứ mệnh", "Cách mạng"],
+    "relatedLessons": ["dau-tranh-vo-san", "nguon-goc-giai-cap"]
+  }
+]

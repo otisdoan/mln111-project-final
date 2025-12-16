@@ -1,0 +1,50 @@
+{
+  "user": {
+    "name": "Học viên",
+    "avatar": "/public/profile.png"
+  },
+  "progress": {
+    "overall": 0.32,
+    "lessonsCompleted": 2,
+    "quizzesTaken": 3,
+    "avgScore": 0.76,
+    "studyTimeMinutes": 240
+  },
+  "breakdown": [
+    { "lessonId": "class-definition", "status": "done", "score": 0.9 },
+    { "lessonId": "class-origin", "status": "in-progress", "score": 0.7 },
+    { "lessonId": "social-structure", "status": "not-started", "score": null },
+    { "lessonId": "class-struggle", "status": "not-started", "score": null },
+    {
+      "lessonId": "proletariat-struggle",
+      "status": "not-started",
+      "score": null
+    },
+    { "lessonId": "transition-vietnam", "status": "not-started", "score": null }
+  ],
+  "achievements": [
+    {
+      "id": "a1",
+      "title": "Khởi động",
+      "description": "Hoàn thành bài học đầu tiên."
+    },
+    { "id": "a2", "title": "Bước tiến", "description": "Làm 3 bài quiz." }
+  ],
+  "recommendations": [
+    {
+      "type": "lesson",
+      "target": "class-struggle",
+      "reason": "Hoàn thiện mạch kiến thức về đấu tranh giai cấp."
+    },
+    {
+      "type": "quiz",
+      "target": "mini",
+      "reason": "Củng cố định nghĩa và đặc trưng giai cấp."
+    },
+    {
+      "type": "flashcard",
+      "target": "set-1",
+      "reason": "Ôn nhanh khái niệm và nguồn gốc giai cấp."
+    }
+  ]
+}
