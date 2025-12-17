@@ -157,6 +157,20 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.grid}>
+            <Link href="/game" asChild>
+              <TouchableOpacity style={[styles.card, styles.gameCard]}>
+                <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
+                  🎮 Trận Chiến Tri Thức
+                </ThemedText>
+                <ThemedText style={styles.muted}>
+                  Game quiz hấp dẫn - Học mà vui!
+                </ThemedText>
+                <View style={[styles.pill, { marginTop: 12, backgroundColor: Colors.accent }]}>
+                  <ThemedText style={[styles.pillText, { color: Colors.accentSoft }]}>MỚI!</ThemedText>
+                </View>
+              </TouchableOpacity>
+            </Link>
+
             <Link href="/mindmap" asChild>
               <TouchableOpacity style={styles.card}>
                 <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
@@ -301,6 +315,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 5,
+  },
+  gameCard: {
+    backgroundColor: Colors.accentSoft,
+    borderColor: Colors.accent,
+    borderWidth: 3,
+    shadowColor: Colors.accent,
+    shadowOpacity: 0.3,
+    shadowRadius: 25,
+    elevation: 8,
+  },
+  gameIcon: {
+    fontSize: 48,
+    textAlign: "center",
+    marginBottom: 12,
   },
   pill: {
     backgroundColor: Colors.badgeWarning,

@@ -11,67 +11,73 @@ const menuItems: {
   icon: string;
   description: string;
 }[] = [
-  {
-    title: "Bài học",
-    href: "/lesson" as Href,
-    icon: "📚",
-    description: "Học lý thuyết giai cấp",
-  },
-  {
-    title: "Video",
-    href: "/video" as Href,
-    icon: "🎥",
-    description: "Xem video bài giảng",
-  },
-  {
-    title: "Flashcard",
-    href: "/flashcard" as Href,
-    icon: "🎴",
-    description: "Ôn nhanh với flashcard",
-  },
-  {
-    title: "Quiz",
-    href: "/quiz" as Href,
-    icon: "✏️",
-    description: "Làm bài kiểm tra",
-  },
-  {
-    title: "Sơ đồ tư duy",
-    href: "/mindmap" as Href,
-    icon: "🗺️",
-    description: "Xem mindmap tổng quan",
-  },
-  {
-    title: "Tổng kết",
-    href: "/summary" as Href,
-    icon: "📝",
-    description: "Tóm tắt kiến thức",
-  },
-  {
-    title: "Hồ sơ",
-    href: "/profile" as Href,
-    icon: "👤",
-    description: "Xem tiến độ học tập",
-  },
-  {
-    title: "Liên minh giai cấp",
-    href: "/lien-minh-giai-cap" as Href,
-    icon: "🤝",
-    description: "Câu hỏi thực tiễn",
-  },
-  {
-    title: "Giới thiệu",
-    href: "/about" as Href,
-    icon: "ℹ️",
-    description: "Về ứng dụng",
-  },
-  {
-    title: "Liên hệ",
-    href: "/contact" as Href,
-    icon: "📧",
-    description: "Góp ý và hỗ trợ",
-  },
-];
+    {
+      title: "🎮 Trận Chiến Tri Thức",
+      href: "/game" as Href,
+      icon: "",
+      description: "Game quiz hấp dẫn - Học mà vui!",
+    },
+    {
+      title: "Bài học",
+      href: "/lesson" as Href,
+      icon: "📚",
+      description: "Học lý thuyết giai cấp",
+    },
+    {
+      title: "Video",
+      href: "/video" as Href,
+      icon: "🎥",
+      description: "Xem video bài giảng",
+    },
+    {
+      title: "Flashcard",
+      href: "/flashcard" as Href,
+      icon: "🎴",
+      description: "Ôn nhanh với flashcard",
+    },
+    {
+      title: "Quiz",
+      href: "/quiz" as Href,
+      icon: "✏️",
+      description: "Làm bài kiểm tra",
+    },
+    {
+      title: "Sơ đồ tư duy",
+      href: "/mindmap" as Href,
+      icon: "🗺️",
+      description: "Xem mindmap tổng quan",
+    },
+    {
+      title: "Tổng kết",
+      href: "/summary" as Href,
+      icon: "📝",
+      description: "Tóm tắt kiến thức",
+    },
+    {
+      title: "Hồ sơ",
+      href: "/profile" as Href,
+      icon: "👤",
+      description: "Xem tiến độ học tập",
+    },
+    {
+      title: "Liên minh giai cấp",
+      href: "/lien-minh-giai-cap" as Href,
+      icon: "🤝",
+      description: "Câu hỏi thực tiễn",
+    },
+    {
+      title: "Giới thiệu",
+      href: "/about" as Href,
+      icon: "ℹ️",
+      description: "Về ứng dụng",
+    },
+    {
+      title: "Liên hệ",
+      href: "/contact" as Href,
+      icon: "📧",
+      description: "Góp ý và hỗ trợ",
+    },
+  ];
 
 export default function ExploreScreen() {
   return (

@@ -51,7 +51,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         console.log('🔄 AuthProvider: Initializing...');
 
-        // 1. Check initial session
+        // 1. Check for OAuth callback tokens in URL (Web only)
+        const isWeb = typeof window !== 'undefined' && window.document;
+        if (isWeb && window.location.hash) {
+            console.log('🔍 Checking URL hash for OAuth tokens...');
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const access_token = hashParams.get('access_token');
+            const refresh_token = hashParams.get('refresh_token');
+
+            if (access_token && refresh_token) {
+                console.log('✅ Found OAuth tokens in URL hash');
+                console.log('💾 Setting session from URL tokens...');
+
+                supabase.auth.setSession({
+                    access_token,
+                    refresh_token,
+                }).then(({ data, error }) => {
+                    if (error) {
+                        console.error('❌ Error setting session from URL:', error);
+                    } else {
+                        console.log('✅ Session set from URL tokens!');
+                        console.log('👤 User:', data.session?.user?.email);
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                });
+            }
+        }
+
+        // 2. Check initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
             console.log('📦 Initial session check:', session ? `User ${session.user.email}` : 'No session');
             setSession(session);
@@ -59,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setLoading(false);
         });
 
-        // 2. Listen for auth changes
+        // 3. Listen for auth changes
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -192,93 +220,146 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     /**
      * Sign In with Google OAuth
      * 
-     * Flow:
-     * 1. Mở browser để user đăng nhập Google
-     * 2. User chấp nhận permissions
-     * 3. Google redirect về app với auth code
-     * 4. Parse access_token + refresh_token từ URL
-     * 5. Set session cho Supabase client
-     * 6. onAuthStateChange(SIGNED_IN) trigger
-     * 
-     * Setup Required:
-     * - Supabase Dashboard → Authentication → Providers → Google
-     * - Bật Google provider
-     * - Nhập Client ID và Client Secret từ Google Cloud Console
-     * - Config Redirect URLs: https://[PROJECT_REF].supabase.co/auth/v1/callback
-     * - Google Cloud Console → Add redirect URI: https://[PROJECT_REF].supabase.co/auth/v1/callback
+     * Đơn giản hóa flow:
+     * 1. Detect platform (web/mobile)
+     * 2. Call Supabase signInWithOAuth với queryParams chứa redirect URL
+     * 3. Supabase tự động handle redirect với tokens trong URL hash
      */
     const signInWithGoogle = async () => {
         try {
-            console.log('🔍 Starting Google OAuth flow...');
+            console.log('\n🚀 === GOOGLE OAUTH START ===');
 
-            // Sử dụng expo redirect URL pattern cho mobile
-            // Supabase sẽ tự động redirect về exp://[localhost or IP]:[port]
-            const redirectUrl = 'exp://127.0.0.1:8081'; // Default Expo Go URL
+            // Detect platform
+            const isWeb = typeof window !== 'undefined' && window.document;
+            console.log('🖥️  Platform:', isWeb ? 'Web' : 'Mobile');
 
-            console.log('🔗 Redirect URL:', redirectUrl);
+            if (isWeb) {
+                // WEB FLOW
+                const currentUrl = window.location.origin + window.location.pathname;
+                console.log('📍 Current URL:', currentUrl);
 
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: redirectUrl,
-                    queryParams: {
-                        access_type: 'offline',
-                        prompt: 'consent',
+                // Gọi Supabase OAuth
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: currentUrl,
+                        skipBrowserRedirect: false,
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent',
+                        },
                     },
-                    skipBrowserRedirect: false,
-                },
-            });
+                });
 
-            if (error) {
-                console.error('❌ Supabase OAuth error:', error);
-                throw error;
-            }
-
-            if (!data?.url) {
-                throw new Error('Không nhận được OAuth URL từ Supabase');
-            }
-
-            console.log('🌐 Opening OAuth URL:', data.url);
-
-            // Mở browser với OAuth URL
-            // WebBrowser sẽ tự động handle redirect về app
-            const result = await WebBrowser.openAuthSessionAsync(
-                data.url,
-                redirectUrl
-            );
-
-            console.log('🔙 WebBrowser result:', result);
-
-            if (result.type === 'success' && result.url) {
-                console.log('✅ OAuth callback received:', result.url);
-
-                // Parse tokens từ URL
-                // URL có thể là: exp://...#access_token=...&refresh_token=...
-                // hoặc: exp://...?access_token=...&refresh_token=...
-                let params: URLSearchParams;
-
-                if (result.url.includes('#')) {
-                    // Hash fragment
-                    const fragment = result.url.split('#')[1];
-                    params = new URLSearchParams(fragment);
-                } else if (result.url.includes('?')) {
-                    // Query string
-                    const query = result.url.split('?')[1];
-                    params = new URLSearchParams(query);
-                } else {
-                    throw new Error('URL callback không có params');
+                if (error) {
+                    console.error('❌ OAuth error:', error);
+                    throw error;
                 }
 
-                const access_token = params.get('access_token');
-                const refresh_token = params.get('refresh_token');
+                if (data?.url) {
+                    console.log('🌐 Redirecting to Google...');
+                    // Redirect đến Google OAuth
+                    window.location.href = data.url;
+                }
 
-                console.log('🔑 Access token found:', access_token ? 'YES' : 'NO');
-                console.log('🔑 Refresh token found:', refresh_token ? 'YES' : 'NO');
+                return { error: null };
+            } else {
+                // MOBILE FLOW
+                const mobileRedirectUrl = 'mln111projectfinal://google-callback';
+                console.log('📱 Mobile redirect:', mobileRedirectUrl);
 
-                if (access_token && refresh_token) {
-                    console.log('🔄 Setting session...');
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: mobileRedirectUrl,
+                        skipBrowserRedirect: false,
+                    },
+                });
 
-                    // Set session cho Supabase client
+                if (error) {
+                    console.error('❌ OAuth error:', error);
+                    throw error;
+                }
+
+                if (!data?.url) {
+                    throw new Error('Không nhận được OAuth URL');
+                }
+
+                // Mở browser modal
+                const result = await WebBrowser.openAuthSessionAsync(
+                    data.url,
+                    mobileRedirectUrl
+                );
+
+                if (result.type === 'success' && result.url) {
+                    // Parse tokens từ URL
+                    const url = result.url;
+                    let access_token: string | null = null;
+                    let refresh_token: string | null = null;
+
+                    if (url.includes('#')) {
+                        const fragment = url.split('#')[1];
+                        const params = new URLSearchParams(fragment);
+                        access_token = params.get('access_token');
+                        refresh_token = params.get('refresh_token');
+                    }
+
+                    if (access_token && refresh_token) {
+                        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+                            access_token,
+                            refresh_token,
+                        });
+
+                        if (sessionError) throw sessionError;
+
+                        if (sessionData.session) {
+                            setSession(sessionData.session);
+                            setUser(sessionData.session.user);
+                            setLoading(false);
+                            return { error: null };
+                        }
+                    }
+                }
+
+                console.log('🔙 Browser closed, result type:', result.type);
+
+                // 3. Handle mobile callback
+                if (result.type === 'success' && result.url) {
+                    console.log('✅ Got callback URL');
+                    console.log('📋 Callback URL:', result.url);
+
+                    // Parse tokens từ URL fragments (#access_token=...)
+                    const url = result.url;
+                    let access_token: string | null = null;
+                    let refresh_token: string | null = null;
+
+                    // Try hash fragment first (standard OAuth)
+                    if (url.includes('#')) {
+                        const fragment = url.split('#')[1];
+                        const params = new URLSearchParams(fragment);
+                        access_token = params.get('access_token');
+                        refresh_token = params.get('refresh_token');
+                        console.log('🔍 Parsed from hash fragment');
+                    }
+                    // Fallback to query string
+                    else if (url.includes('?')) {
+                        const query = url.split('?')[1].split('#')[0];
+                        const params = new URLSearchParams(query);
+                        access_token = params.get('access_token');
+                        refresh_token = params.get('refresh_token');
+                        console.log('🔍 Parsed from query string');
+                    }
+
+                    console.log('🔑 Access token:', access_token ? 'FOUND ✓' : 'NOT FOUND ✗');
+                    console.log('🔑 Refresh token:', refresh_token ? 'FOUND ✓' : 'NOT FOUND ✗');
+
+                    if (!access_token || !refresh_token) {
+                        console.error('❌ Missing tokens in callback URL');
+                        throw new Error('Không tìm thấy tokens trong callback URL');
+                    }
+
+                    // 4. Set session với tokens
+                    console.log('💾 Setting session...');
                     const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
                         access_token,
                         refresh_token,
@@ -289,56 +370,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         throw sessionError;
                     }
 
-                    console.log('✅ Session set successfully:', sessionData.session?.user?.email);
-
-                    // Manual update state để đảm bảo không bị stuck
                     if (sessionData.session) {
-                        console.log('🔄 Manually updating auth state...');
+                        console.log('✅ Session set successfully!');
+                        console.log('👤 User:', sessionData.session.user.email);
                         setSession(sessionData.session);
                         setUser(sessionData.session.user);
                         setLoading(false);
+                        return { error: null };
                     }
 
-                    // onAuthStateChange cũng sẽ tự động trigger
-                } else {
-                    throw new Error('Không tìm thấy access_token hoặc refresh_token trong callback URL');
+                    throw new Error('Không tìm thấy tokens trong callback URL');
+                } else if (result.type === 'cancel') {
+                    throw new Error('Bạn đã hủy đăng nhập');
+                } else if (result.type === 'dismiss') {
+                    throw new Error('Đã đóng cửa sổ đăng nhập');
                 }
-            } else if (result.type === 'cancel') {
-                throw new Error('Đăng nhập bị hủy');
-            } else if (result.type === 'dismiss') {
-                throw new Error('Đã đóng cửa sổ đăng nhập');
-            } else {
-                throw new Error(`OAuth flow không thành công: ${result.type}`);
+
+                throw new Error('OAuth flow thất bại');
             }
-
-            return { error: null };
         } catch (error: any) {
-            console.error('❌ Google sign in error:', error);
+            console.error('❌ Google OAuth Error:', error);
 
-            // Map errors sang tiếng Việt
             let errorMessage = error.message;
-
             if (error.message?.includes('Provider not enabled')) {
-                errorMessage = '❌ Google OAuth chưa được BẬT trên Supabase.\n\n' +
-                    '📝 Cách sửa:\n' +
-                    '1. Vào Supabase Dashboard\n' +
-                    '2. Authentication → Providers\n' +
-                    '3. Bật Google Provider\n' +
-                    '4. Nhập Client ID và Client Secret từ Google Cloud Console\n' +
-                    '5. Thêm Redirect URI: https://wwfaplkeqedqnhidxdxn.supabase.co/auth/v1/callback';
-            } else if (error.message?.includes('redirect_uri')) {
-                errorMessage = '❌ Redirect URI chưa được cấu hình đúng.\n\n' +
-                    '📝 Kiểm tra:\n' +
-                    '1. Google Cloud Console → APIs & Services → Credentials\n' +
-                    '2. Chọn OAuth 2.0 Client ID\n' +
-                    '3. Thêm: https://wwfaplkeqedqnhidxdxn.supabase.co/auth/v1/callback\n' +
-                    '4. Save và thử lại';
-            } else if (error.message?.includes('hủy') || error.message?.includes('cancel')) {
-                errorMessage = 'Bạn đã hủy đăng nhập';
-            } else if (error.message?.includes('đóng')) {
-                errorMessage = 'Đã đóng cửa sổ đăng nhập';
-            } else {
-                errorMessage = `Lỗi đăng nhập Google: ${error.message}`;
+                errorMessage = '❌ Google OAuth chưa được BẬT trên Supabase!\n\n' +
+                    'Vào: https://supabase.com/dashboard\n' +
+                    'Authentication → Providers → Google → Enable';
             }
 
             return { error: new Error(errorMessage) };

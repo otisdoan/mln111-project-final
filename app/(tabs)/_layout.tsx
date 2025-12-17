@@ -32,7 +32,7 @@ export default function TabLayout() {
         options={{
           title: "Khám phá",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="book.fill" color={color} />
+            <IconSymbol size={28} name="magnifyingglass" color={color} />
           ),
         }}
       />

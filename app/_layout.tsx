@@ -80,6 +80,7 @@ export default function RootLayout() {
               options={{ headerRight: undefined, headerShown: false }}
             />
             <Stack.Screen name="lien-minh-giai-cap" />
+            <Stack.Screen name="game" />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
