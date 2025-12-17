@@ -52,7 +52,7 @@ export default function AuthScreen() {
         if (isSignUp) {
           Alert.alert(
             "Thành công",
-            "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản (nếu bật email confirmation)."
+            "Đăng ký thành công! Bạn đã được đăng nhập tự động."
           );
         }
       }

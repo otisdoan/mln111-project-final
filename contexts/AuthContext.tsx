@@ -78,14 +78,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * 
      * Flow:
      * 1. Supabase tạo user trong auth.users
-     * 2. Gửi email xác nhận (nếu bật email confirmation)
-     * 3. Tự động đăng nhập nếu không cần confirm
-     * 4. Trigger onAuthStateChange(SIGNED_IN)
+     * 2. TỰ ĐỘNG ĐĂNG NHẬP LUÔN - Không cần xác nhận email
+     * 3. Trigger onAuthStateChange(SIGNED_IN)
      * 
-     * Email Confirmation:
-     * - Mặc định: Supabase yêu cầu confirm email
-     * - Tắt: Dashboard → Authentication → Settings → Email Auth
-     * - Check "Enable email confirmations" = OFF cho dev
+     * Email Confirmation: ĐÃ TẮT
+     * - Để tắt xác nhận email trên Supabase Dashboard:
+     *   Dashboard → Authentication → Settings → Email Auth
+     *   → Bỏ check "Enable email confirmations"
      */
     const signUp = async (email: string, password: string) => {
         try {
@@ -102,21 +101,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 return { error: new Error('Password phải có ít nhất 6 ký tự') };
             }
 
-            const { error } = await supabase.auth.signUp({
+            console.log('📝 Đang đăng ký tài khoản:', email);
+
+            const { data, error } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
-                    // Redirect sau khi confirm email (web only)
-                    // emailRedirectTo: 'myapp://auth/callback',
+                    // Tự động confirm email (không cần xác nhận qua email)
+                    emailRedirectTo: undefined,
+                    data: {
+                        // Thêm metadata nếu cần
+                        display_name: email.split('@')[0],
+                    },
                 },
             });
 
             if (error) throw error;
 
+            console.log('✅ Đăng ký thành công:', data.user?.email);
+
+            // Sau khi đăng ký thành công, user đã tự động đăng nhập
+            // AuthContext sẽ tự động update state qua onAuthStateChange
+
             return { error: null };
         } catch (error: any) {
             console.error('❌ Sign up error:', error.message);
-            return { error: new Error(error.message) };
+
+            // Map lỗi sang tiếng Việt
+            let errorMessage = error.message;
+            if (error.message.includes('User already registered')) {
+                errorMessage = 'Email này đã được đăng ký. Vui lòng đăng nhập.';
+            } else if (error.message.includes('Password should be')) {
+                errorMessage = 'Mật khẩu phải có ít nhất 6 ký tự';
+            }
+
+            return { error: new Error(errorMessage) };
         }
     };
 
@@ -185,14 +204,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * - Supabase Dashboard → Authentication → Providers → Google
      * - Bật Google provider
      * - Nhập Client ID và Client Secret từ Google Cloud Console
-     * - Config Redirect URLs
+     * - Config Redirect URLs: https://[PROJECT_REF].supabase.co/auth/v1/callback
+     * - Google Cloud Console → Add redirect URI: https://[PROJECT_REF].supabase.co/auth/v1/callback
      */
     const signInWithGoogle = async () => {
         try {
             console.log('🔍 Starting Google OAuth flow...');
 
-            // Sử dụng wildcard để hỗ trợ cả localhost và IP addresses
-            const redirectUrl = 'exp://localhost:8081';
+            // Sử dụng expo redirect URL pattern cho mobile
+            // Supabase sẽ tự động redirect về exp://[localhost or IP]:[port]
+            const redirectUrl = 'exp://127.0.0.1:8081'; // Default Expo Go URL
+
+            console.log('🔗 Redirect URL:', redirectUrl);
 
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
@@ -202,6 +225,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         access_type: 'offline',
                         prompt: 'consent',
                     },
+                    skipBrowserRedirect: false,
                 },
             });
 
@@ -216,10 +240,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             console.log('🌐 Opening OAuth URL:', data.url);
 
-            // Mở browser với OAuth URL - KHÔNG chỉ định redirectUrl để accept mọi exp:// URLs
+            // Mở browser với OAuth URL
+            // WebBrowser sẽ tự động handle redirect về app
             const result = await WebBrowser.openAuthSessionAsync(
                 data.url,
-                undefined // Accept bất kỳ redirect URL nào
+                redirectUrl
             );
 
             console.log('🔙 WebBrowser result:', result);
@@ -227,9 +252,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (result.type === 'success' && result.url) {
                 console.log('✅ OAuth callback received:', result.url);
 
-                // Parse tokens từ URL fragment
-                const url = new URL(result.url);
-                const params = new URLSearchParams(url.hash.substring(1)); // Bỏ ký tự '#'
+                // Parse tokens từ URL
+                // URL có thể là: exp://...#access_token=...&refresh_token=...
+                // hoặc: exp://...?access_token=...&refresh_token=...
+                let params: URLSearchParams;
+
+                if (result.url.includes('#')) {
+                    // Hash fragment
+                    const fragment = result.url.split('#')[1];
+                    params = new URLSearchParams(fragment);
+                } else if (result.url.includes('?')) {
+                    // Query string
+                    const query = result.url.split('?')[1];
+                    params = new URLSearchParams(query);
+                } else {
+                    throw new Error('URL callback không có params');
+                }
 
                 const access_token = params.get('access_token');
                 const refresh_token = params.get('refresh_token');
@@ -267,8 +305,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
             } else if (result.type === 'cancel') {
                 throw new Error('Đăng nhập bị hủy');
+            } else if (result.type === 'dismiss') {
+                throw new Error('Đã đóng cửa sổ đăng nhập');
             } else {
-                throw new Error('OAuth flow không thành công');
+                throw new Error(`OAuth flow không thành công: ${result.type}`);
             }
 
             return { error: null };
@@ -279,11 +319,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             let errorMessage = error.message;
 
             if (error.message?.includes('Provider not enabled')) {
-                errorMessage = 'Google OAuth chưa được bật trên Supabase.\n\nVui lòng vào Dashboard → Authentication → Providers → Google và bật Google provider.';
+                errorMessage = '❌ Google OAuth chưa được BẬT trên Supabase.\n\n' +
+                    '📝 Cách sửa:\n' +
+                    '1. Vào Supabase Dashboard\n' +
+                    '2. Authentication → Providers\n' +
+                    '3. Bật Google Provider\n' +
+                    '4. Nhập Client ID và Client Secret từ Google Cloud Console\n' +
+                    '5. Thêm Redirect URI: https://wwfaplkeqedqnhidxdxn.supabase.co/auth/v1/callback';
             } else if (error.message?.includes('redirect_uri')) {
-                errorMessage = 'Cấu hình Redirect URI không đúng.\n\nKiểm tra lại Google OAuth settings.';
-            } else if (error.message?.includes('hủy')) {
+                errorMessage = '❌ Redirect URI chưa được cấu hình đúng.\n\n' +
+                    '📝 Kiểm tra:\n' +
+                    '1. Google Cloud Console → APIs & Services → Credentials\n' +
+                    '2. Chọn OAuth 2.0 Client ID\n' +
+                    '3. Thêm: https://wwfaplkeqedqnhidxdxn.supabase.co/auth/v1/callback\n' +
+                    '4. Save và thử lại';
+            } else if (error.message?.includes('hủy') || error.message?.includes('cancel')) {
                 errorMessage = 'Bạn đã hủy đăng nhập';
+            } else if (error.message?.includes('đóng')) {
+                errorMessage = 'Đã đóng cửa sổ đăng nhập';
             } else {
                 errorMessage = `Lỗi đăng nhập Google: ${error.message}`;
             }

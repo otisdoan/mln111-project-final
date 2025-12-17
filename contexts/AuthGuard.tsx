@@ -3,8 +3,9 @@
  * 
  * Component này wrap toàn bộ app và:
  * 1. Hiển thị loading khi đang check session
- * 2. Redirect đến /auth nếu chưa login
- * 3. Cho phép truy cập nếu đã login
+ * 2. Cho phép truy cập trang landing (index) và auth nếu chưa login
+ * 3. Redirect về trang landing nếu chưa login và cố truy cập route protected
+ * 4. Redirect về tabs nếu đã login và đang ở trang auth
  */
 
 import { Colors } from '@/constants/theme';
@@ -25,20 +26,22 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
         const inAuthGroup = segments[0] === 'auth';
 
-        console.log('🛡️ AuthGuard: inAuthGroup =', inAuthGroup);
+        // Public pages that don't need authentication
+        const publicPages = ['about', 'contact', 'lien-minh-giai-cap', 'modal'];
+        const isPublicPage = publicPages.includes(segments[0] as string);
 
-        if (!user && !inAuthGroup) {
-            // User chưa login và không ở trang auth → redirect
-            console.log('🛡️ AuthGuard: Redirecting to /auth');
-            router.replace('/auth');
+        console.log('🛡️ AuthGuard: inAuthGroup =', inAuthGroup, ', isPublicPage =', isPublicPage);
+
+        if (!user && !inAuthGroup && !isPublicPage) {
+            // User chưa login và cố truy cập route protected → redirect về landing (/)
+            console.log('🛡️ AuthGuard: Not authenticated, redirecting to /');
+            router.replace('/');
         } else if (user && inAuthGroup) {
-            // User đã login nhưng đang ở trang auth → redirect về home
-            console.log('🛡️ AuthGuard: User logged in at auth screen, redirecting to /(tabs)');
+            // User đã login nhưng đang ở trang auth → redirect về tabs
+            console.log('🛡️ AuthGuard: User logged in at auth page, redirecting to /(tabs)');
             setTimeout(() => {
                 router.replace('/(tabs)');
-            }, 100); // Small delay để đảm bảo state đã update
-        } else if (user && !inAuthGroup) {
-            console.log('🛡️ AuthGuard: User logged in, staying at current screen');
+            }, 100);
         }
     }, [user, loading, segments]);
 

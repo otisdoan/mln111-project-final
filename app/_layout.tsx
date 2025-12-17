@@ -38,7 +38,7 @@ const CustomDarkTheme = {
 };
 
 export const unstable_settings = {
-  anchor: "(tabs)",
+  anchor: "index",
 };
 
 export default function RootLayout() {
@@ -52,10 +52,10 @@ export default function RootLayout() {
         >
           <Stack
             screenOptions={{
-              headerBackTitleVisible: false,
               headerRight: () => <ProfileButton />,
             }}
           >
+            <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen
               name="modal"
@@ -77,7 +77,7 @@ export default function RootLayout() {
             <Stack.Screen name="contact" />
             <Stack.Screen
               name="auth"
-              options={{ headerRight: undefined }}
+              options={{ headerRight: undefined, headerShown: false }}
             />
             <Stack.Screen name="lien-minh-giai-cap" />
           </Stack>
