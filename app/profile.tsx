@@ -1,13 +1,63 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
 import profileData from "@/data/profile.json";
-import { Stack } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Stack, useRouter } from "expo-router";
+import { useEffect } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
-  const { user, progress, achievements, recommendations } = profileData;
+  const router = useRouter();
+  const { user, signOut, loading } = useAuth();
+  const {
+    user: profileUser,
+    progress,
+    achievements,
+    recommendations,
+  } = profileData;
+
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      Alert.alert("Yêu cầu đăng nhập", "Bạn cần đăng nhập để xem hồ sơ", [
+        {
+          text: "Đăng nhập",
+          onPress: () => router.replace("/auth"),
+        },
+        {
+          text: "Quay lại",
+          style: "cancel",
+          onPress: () => router.back(),
+        },
+      ]);
+    }
+  }, [user, loading]);
+
+  const handleLogout = () => {
+    Alert.alert("Đăng xuất", "Bạn có chắc muốn đăng xuất?", [
+      { text: "Hủy", style: "cancel" },
+      {
+        text: "Đăng xuất",
+        style: "destructive",
+        onPress: async () => {
+          await signOut();
+          router.replace("/(tabs)");
+        },
+      },
+    ]);
+  };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
@@ -27,12 +77,34 @@ export default function ProfileScreen() {
             <View style={styles.userCard}>
               <View style={styles.avatar}>
                 <ThemedText style={styles.avatarText}>
-                  {user.name.charAt(0)}
+                  {user
+                    ? user.email?.charAt(0).toUpperCase()
+                    : profileUser.name.charAt(0)}
                 </ThemedText>
               </View>
               <ThemedText type="title" style={styles.userName}>
-                {user.name}
+                {user ? user.email : profileUser.name}
               </ThemedText>
+              {user && (
+                <TouchableOpacity
+                  style={styles.logoutButton}
+                  onPress={handleLogout}
+                >
+                  <ThemedText style={styles.logoutButtonText}>
+                    Đăng xuất
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
+              {!user && (
+                <TouchableOpacity
+                  style={styles.loginPromptButton}
+                  onPress={() => router.push("/auth")}
+                >
+                  <ThemedText style={styles.loginPromptText}>
+                    Đăng nhập để lưu tiến độ
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
             </View>
 
             {/* Overall Progress */}
@@ -297,5 +369,29 @@ const styles = StyleSheet.create({
   recReason: {
     fontSize: 14,
     color: Colors.muted,
+  },
+  logoutButton: {
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    backgroundColor: "#ff4444",
+    borderRadius: 999,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  loginPromptButton: {
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    backgroundColor: Colors.accent,
+    borderRadius: 999,
+  },
+  loginPromptText: {
+    color: Colors.accentSoft,
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

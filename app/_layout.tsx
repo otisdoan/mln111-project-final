@@ -4,10 +4,11 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
+import { ProfileButton } from "@/components/ProfileButton";
 import { Colors } from "@/constants/theme";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 // Custom theme with web app colors
@@ -35,41 +36,46 @@ const CustomDarkTheme = {
 };
 
 export const unstable_settings = {
-  anchor: "(tabs)",
+  initialRouteName: "(tabs)",
 };
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider
-      value={colorScheme === "dark" ? CustomDarkTheme : LightTheme}
-    >
-      <Stack
-        screenOptions={{
-          headerBackTitleVisible: false,
-        }}
+    <AuthProvider>
+      <ThemeProvider
+        value={colorScheme === "dark" ? CustomDarkTheme : LightTheme}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="modal"
-          options={{ presentation: "modal", title: "Modal" }}
-        />
-        <Stack.Screen name="lesson/index" />
-        <Stack.Screen name="lesson/[slug]" />
-        <Stack.Screen name="video/index" />
-        <Stack.Screen name="video/[slug]" />
-        <Stack.Screen name="flashcard" />
-        <Stack.Screen name="quiz" />
-        <Stack.Screen name="mindmap" />
-        <Stack.Screen name="profile" />
-        <Stack.Screen name="summary" />
-        <Stack.Screen name="about" />
-        <Stack.Screen name="contact" />
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="lien-minh-giai-cap" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+        <Stack
+          screenOptions={{
+            headerRight: () => <ProfileButton />,
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="modal"
+            options={{ presentation: "modal", title: "Modal" }}
+          />
+          <Stack.Screen name="lesson/index" />
+          <Stack.Screen name="lesson/[slug]" />
+          <Stack.Screen name="video/index" />
+          <Stack.Screen name="video/[slug]" />
+          <Stack.Screen name="flashcard" />
+          <Stack.Screen name="quiz" />
+          <Stack.Screen name="mindmap" />
+          <Stack.Screen name="profile" options={{ headerRight: undefined }} />
+          <Stack.Screen name="summary" />
+          <Stack.Screen name="about" />
+          <Stack.Screen name="contact" />
+          <Stack.Screen
+            name="auth"
+            options={{ headerRight: undefined, headerShown: false }}
+          />
+          <Stack.Screen name="lien-minh-giai-cap" />
+          <Stack.Screen name="game" />
+        </Stack>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

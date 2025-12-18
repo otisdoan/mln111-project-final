@@ -3,6 +3,7 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import lessons from "@/data/lessons.json";
 import { Link } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -12,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const roadmap = [
   "Khái niệm Giai cấp",
@@ -67,10 +67,8 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}
-      edges={["top"]}
-    >
+    <View style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       <ScrollView style={styles.container}>
         {/* Hero Banner Carousel */}
         <View style={styles.heroBannerContainer}>
@@ -157,6 +155,29 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.grid}>
+            <Link href="/game" asChild>
+              <TouchableOpacity style={[styles.card, styles.gameCard]}>
+                <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
+                  🎮 Trận Chiến Tri Thức
+                </ThemedText>
+                <ThemedText style={styles.muted}>
+                  Game quiz hấp dẫn - Học mà vui!
+                </ThemedText>
+                <View
+                  style={[
+                    styles.pill,
+                    { marginTop: 12, backgroundColor: Colors.accent },
+                  ]}
+                >
+                  <ThemedText
+                    style={[styles.pillText, { color: Colors.accentSoft }]}
+                  >
+                    MỚI!
+                  </ThemedText>
+                </View>
+              </TouchableOpacity>
+            </Link>
+
             <Link href="/mindmap" asChild>
               <TouchableOpacity style={styles.card}>
                 <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
@@ -187,7 +208,7 @@ export default function HomeScreen() {
           </View>
         </ThemedView>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -301,6 +322,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 5,
+  },
+  gameCard: {
+    backgroundColor: Colors.accentSoft,
+    borderColor: Colors.accent,
+    borderWidth: 3,
+    shadowColor: Colors.accent,
+    shadowOpacity: 0.3,
+    shadowRadius: 25,
+    elevation: 8,
+  },
+  gameIcon: {
+    fontSize: 48,
+    textAlign: "center",
+    marginBottom: 12,
   },
   pill: {
     backgroundColor: Colors.badgeWarning,

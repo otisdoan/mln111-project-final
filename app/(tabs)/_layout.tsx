@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
-import React from "react";
 
 import { HapticTab } from "@/components/haptic-tab";
+import { ProfileButton } from "@/components/ProfileButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -13,14 +13,16 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
+        headerRight: () => <ProfileButton />,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Trang chủ",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="house.fill" color={color} />
           ),
@@ -31,8 +33,18 @@ export default function TabLayout() {
         options={{
           title: "Khám phá",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="book.fill" color={color} />
+            <IconSymbol size={28} name="magnifyingglass" color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="user"
+        options={{
+          title: "Người dùng",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="person.fill" color={color} />
+          ),
+          headerRight: undefined,
         }}
       />
     </Tabs>
