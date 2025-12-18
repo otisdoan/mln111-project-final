@@ -3,9 +3,17 @@
  */
 
 import quickRepliesData from "@/data/quick-replies.json";
-import { generateResponse, isQuestionInScope, validateQuestion } from "@/lib/ai/gemini";
+import {
+  generateResponse,
+  isQuestionInScope,
+  validateQuestion,
+} from "@/lib/ai/gemini";
 import { FALLBACK_RESPONSES, GREETING_MESSAGE } from "@/lib/ai/prompts";
-import { buildContextString, getLessonMetadata, searchRelevantLessons } from "@/lib/ai/rag";
+import {
+  buildContextString,
+  getLessonMetadata,
+  searchRelevantLessons,
+} from "@/lib/ai/rag";
 import { ChatContextType, Message, QuickReply } from "@/types/chat";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
@@ -139,7 +147,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         };
         setMessages((prev) => [...prev, aiMsg]);
         setLoading(false);
-        
+
         // Refresh quick replies
         loadQuickReplies();
         return;
@@ -151,7 +159,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       const lessonMetadata = getLessonMetadata(relevantLessons);
 
       // Generate AI response with lesson links
-      const aiResponse = await generateResponse(context, content, lessonMetadata);
+      const aiResponse = await generateResponse(
+        context,
+        content,
+        lessonMetadata
+      );
 
       // Add AI message
       const aiMsg: Message = {

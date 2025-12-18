@@ -4,7 +4,7 @@
 
 export interface Message {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: Date;
   lessonReferences?: string[]; // Slug của bài học liên quan
@@ -13,7 +13,7 @@ export interface Message {
 export interface QuickReply {
   id: string;
   text: string;
-  category: 'concept' | 'history' | 'application';
+  category: "concept" | "history" | "application";
 }
 
 export interface ChatContextType {

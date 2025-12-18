@@ -19,26 +19,30 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   const parseContent = (content: string) => {
     // Regex to match [text](lesson://slug)
     const linkRegex = /\[([^\]]+)\]\(lesson:\/\/([^\)]+)\)/g;
-    const parts: { type: 'text' | 'link', content: string, slug?: string }[] = [];
+    const parts: { type: "text" | "link"; content: string; slug?: string }[] =
+      [];
     let lastIndex = 0;
     let match;
 
     while ((match = linkRegex.exec(content)) !== null) {
       // Add text before link
       if (match.index > lastIndex) {
-        parts.push({ type: 'text', content: content.substring(lastIndex, match.index) });
+        parts.push({
+          type: "text",
+          content: content.substring(lastIndex, match.index),
+        });
       }
       // Add link
-      parts.push({ type: 'link', content: match[1], slug: match[2] });
+      parts.push({ type: "link", content: match[1], slug: match[2] });
       lastIndex = match.index + match[0].length;
     }
 
     // Add remaining text
     if (lastIndex < content.length) {
-      parts.push({ type: 'text', content: content.substring(lastIndex) });
+      parts.push({ type: "text", content: content.substring(lastIndex) });
     }
 
-    return parts.length > 0 ? parts : [{ type: 'text' as const, content }];
+    return parts.length > 0 ? parts : [{ type: "text" as const, content }];
   };
 
   const handleLessonPress = (slug: string) => {
@@ -60,16 +64,18 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           isUser ? styles.userBubble : styles.assistantBubble,
         ]}
       >
-        <Text style={[styles.text, isUser ? styles.userText : styles.assistantText]}>
+        <Text
+          style={[styles.text, isUser ? styles.userText : styles.assistantText]}
+        >
           {parts.map((part, index) => {
-            if (part.type === 'link' && part.slug) {
+            if (part.type === "link" && part.slug) {
               return (
                 <Text
                   key={index}
                   onPress={() => handleLessonPress(part.slug!)}
                   style={[
                     styles.link,
-                    isUser ? styles.userLink : styles.assistantLink
+                    isUser ? styles.userLink : styles.assistantLink,
                   ]}
                 >
                   {part.content}
@@ -138,8 +144,8 @@ const styles = StyleSheet.create({
     color: Colors.text, // Đen
   },
   link: {
-    textDecorationLine: 'underline',
-    fontWeight: '600',
+    textDecorationLine: "underline",
+    fontWeight: "600",
   },
   userLink: {
     color: Colors.accentSoft, // Vàng cho user bubble

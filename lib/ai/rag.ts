@@ -66,9 +66,7 @@ export function searchRelevantLessons(
         if ("heading" in section && section.heading) {
           relevantSections.push(section.heading);
         } else if ("body" in section && section.body) {
-          relevantSections.push(
-            section.body.substring(0, 100) + "..."
-          );
+          relevantSections.push(section.body.substring(0, 100) + "...");
         }
       }
     }
@@ -139,10 +137,12 @@ function extractKeywords(query: string): string[] {
 /**
  * Get lesson metadata for link generation
  */
-export function getLessonMetadata(contexts: LessonContext[]): {slug: string, title: string}[] {
-  return contexts.map(c => ({
+export function getLessonMetadata(
+  contexts: LessonContext[]
+): { slug: string; title: string }[] {
+  return contexts.map((c) => ({
     slug: c.slug,
-    title: c.title
+    title: c.title,
   }));
 }
 

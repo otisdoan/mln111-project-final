@@ -34,13 +34,18 @@ PHONG CÁCH:
 - Kết thúc với động viên hoặc gợi ý
 `;
 
-export function buildPrompt(context: string, question: string, lessons?: {slug: string, title: string}[]): string {
+export function buildPrompt(
+  context: string,
+  question: string,
+  lessons?: { slug: string; title: string }[]
+): string {
   let lessonLinks = "";
   if (lessons && lessons.length > 0) {
-    lessonLinks = "\n\nCÁC BÀI HỌC LIÊN QUAN (dùng để tạo link):\n" + 
-      lessons.map(l => `- [${l.title}](lesson://${l.slug})`).join("\n");
+    lessonLinks =
+      "\n\nCÁC BÀI HỌC LIÊN QUAN (dùng để tạo link):\n" +
+      lessons.map((l) => `- [${l.title}](lesson://${l.slug})`).join("\n");
   }
-  
+
   return `${SYSTEM_PROMPT}
 
 THÔNG TIN TỪ BÀI HỌC:
@@ -51,7 +56,9 @@ ${question}
 
 Hãy trả lời câu hỏi dựa trên thông tin bài học trên. Nếu không đủ thông tin, hãy trả lời dựa trên kiến thức của bạn nhưng lưu ý rằng đây là nội dung mở rộng.
 
-**QUAN TRỌNG**: Khi đề cập đến bài học, hãy thêm link clickable theo format: [Tên bài](lesson://slug). Ví dụ: "Bạn có thể đọc thêm tại [${lessons?.[0]?.title || "bài học này"}](lesson://${lessons?.[0]?.slug || "slug"}) 📚"`;
+**QUAN TRỌNG**: Khi đề cập đến bài học, hãy thêm link clickable theo format: [Tên bài](lesson://slug). Ví dụ: "Bạn có thể đọc thêm tại [${
+    lessons?.[0]?.title || "bài học này"
+  }](lesson://${lessons?.[0]?.slug || "slug"}) 📚"`;
 }
 
 export const FALLBACK_RESPONSES = [

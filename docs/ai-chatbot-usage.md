@@ -7,6 +7,7 @@ Chatbot AI đã được tích hợp hoàn chỉnh vào app MLN111!
 ### 📦 Files đã tạo:
 
 #### UI Components:
+
 - `components/chat/ChatBubble.tsx` - Bubble tin nhắn (đỏ cho user, cream cho AI)
 - `components/chat/ChatInput.tsx` - Input + Send button
 - `components/chat/QuickReplies.tsx` - Gợi ý câu hỏi
@@ -14,18 +15,22 @@ Chatbot AI đã được tích hợp hoàn chỉnh vào app MLN111!
 - `components/chat/ChatHeader.tsx` - Header với icon robot
 
 #### AI Logic:
+
 - `lib/ai/gemini.ts` - Google Gemini API client
 - `lib/ai/rag.ts` - RAG logic (search trong lessons.json)
 - `lib/ai/prompts.ts` - System prompts và templates
 
 #### State Management:
+
 - `contexts/ChatContext.tsx` - Chat state với AsyncStorage
 - `types/chat.ts` - TypeScript interfaces
 
 #### Data:
+
 - `data/quick-replies.json` - 18 câu hỏi gợi ý (3 categories)
 
 #### Main Screen:
+
 - `app/chat.tsx` - Trang chat chính
 
 ---
@@ -75,6 +80,7 @@ Từ home screen → tap vào **"Trợ lý AI thông minh"** (card màu đỏ v�
 ### 2. Đặt câu hỏi
 
 **Ví dụ câu hỏi trong phạm vi:**
+
 - "Giai cấp là gì?"
 - "Giải thích nguồn gốc giai cấp"
 - "Đấu tranh giai cấp trong thời đại số?"
@@ -82,6 +88,7 @@ Từ home screen → tap vào **"Trợ lý AI thông minh"** (card màu đỏ v�
 - "Vai trò của công nghệ trong đấu tranh giai cấp"
 
 **Câu hỏi ngoài phạm vi sẽ bị từ chối:**
+
 - "Thời tiết hôm nay thế nào?"
 - "Làm sao để học Python?"
 - "Viết code cho tôi"
@@ -89,6 +96,7 @@ Từ home screen → tap vào **"Trợ lý AI thông minh"** (card màu đỏ v�
 ### 3. Quick Replies
 
 Tap vào các gợi ý để hỏi nhanh:
+
 - 💡 Concept: Khái niệm cơ bản
 - 📚 History: Lịch sử, nguồn gốc
 - ⚡ Application: Ứng dụng hiện đại
@@ -102,6 +110,7 @@ Tap **"🗑️ Xóa chat"** ở góc phải trên cùng.
 ## 🎨 Giao diện
 
 ### Màu sắc:
+
 - **User bubble**: Đỏ (#c41e3a) với text vàng
 - **AI bubble**: Cream (#fff8f0) với text đen, border vàng
 - **Header**: Đỏ với text vàng
@@ -109,6 +118,7 @@ Tap **"🗑️ Xóa chat"** ở góc phải trên cùng.
 - **Quick replies**: Cream với border vàng
 
 ### Features:
+
 - ✅ Auto-scroll khi có tin nhắn mới
 - ✅ Typing indicator khi AI đang suy nghĩ
 - ✅ Lưu lịch sử chat (max 50 messages)
@@ -156,12 +166,14 @@ User hỏi: "Giai cấp công nhân là gì?"
 ## 📊 Limits & Quotas
 
 ### Gemini Free Tier:
+
 - ✅ **60 requests/minute** - Đủ cho 1 user
 - ✅ **1,500 requests/day** - Đủ cho ~50 users
 - ✅ **Unlimited** cho personal/educational use
 - ⚠️ Nếu vượt quá → HTTP 429 error
 
 ### Rate Limiting trong code:
+
 - Debounce: 500ms (planned)
 - Max message length: 500 chars
 - Max history: 50 messages
@@ -171,22 +183,27 @@ User hỏi: "Giai cấp công nhân là gì?"
 ## 🐛 Troubleshooting
 
 ### "Xin lỗi, hệ thống AI chưa được cấu hình"
+
 → Thiếu `EXPO_PUBLIC_GEMINI_API_KEY` trong `.env`
 → Giải pháp: Thêm API key và restart Metro
 
 ### "API key không hợp lệ"
+
 → API key sai hoặc hết hạn
 → Giải pháp: Tạo API key mới tại https://makersuite.google.com/app/apikey
 
 ### "Đã vượt quá giới hạn"
+
 → Vượt 60 req/min hoặc 1500 req/day
 → Giải pháp: Chờ 1-2 phút rồi thử lại
 
 ### "Không thể kết nối đến server AI"
+
 → Không có internet hoặc Gemini API down
 → Giải pháp: Kiểm tra kết nối internet
 
 ### Typing indicator không dừng
+
 → API call bị stuck
 → Giải pháp: Refresh app
 
@@ -197,26 +214,32 @@ User hỏi: "Giai cấp công nhân là gì?"
 ### Test cases:
 
 1. **In-scope question:**
+
    - Input: "Giai cấp là gì?"
    - Expected: AI trả lời dựa trên lessons.json
 
 2. **Out-of-scope question:**
+
    - Input: "Thời tiết hôm nay?"
    - Expected: Fallback response từ chối lịch sự
 
 3. **Empty input:**
+
    - Input: "" (empty)
    - Expected: Error message
 
 4. **Too short:**
+
    - Input: "Gi"
    - Expected: "Câu hỏi quá ngắn"
 
 5. **Too long:**
+
    - Input: 501+ characters
    - Expected: "Câu hỏi quá dài"
 
 6. **Quick reply:**
+
    - Tap: "Giai cấp là gì?"
    - Expected: Auto-send và nhận response
 
@@ -229,11 +252,13 @@ User hỏi: "Giai cấp công nhân là gì?"
 ## 💰 Cost Analysis
 
 ### Current (Gemini Free):
+
 - **Cost**: $0 / month
 - **Limit**: 60 req/min, 1500 req/day
 - **Suitable for**: 1-50 users/day
 
 ### If upgrade to OpenAI GPT-3.5:
+
 - **Cost**: ~$0.004 / conversation
 - **~$4 / 1000 conversations**
 - **No rate limit** (depends on usage tier)
@@ -243,6 +268,7 @@ User hỏi: "Giai cấp công nhân là gì?"
 ## 📝 Future Enhancements
 
 ### Phase 2 (nếu cần):
+
 - [ ] Voice input (Speech-to-text)
 - [ ] Streaming responses (show word-by-word)
 - [ ] Better semantic search (embeddings)
@@ -280,6 +306,7 @@ User hỏi: "Giai cấp công nhân là gì?"
 ## 🎉 Hoàn thành!
 
 Chat AI đã sẵn sàng sử dụng. Chỉ cần:
+
 1. Add API key vào `.env`
 2. Restart Metro
 3. Tap vào "Trợ lý AI" trên home screen

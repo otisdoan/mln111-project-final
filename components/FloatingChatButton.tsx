@@ -4,6 +4,7 @@
 
 import { Colors } from "@/constants/theme";
 import { useRouter } from "expo-router";
+import { useEffect, useRef } from "react";
 import {
   Animated,
   StyleSheet,
@@ -11,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useEffect, useRef } from "react";
 
 export function FloatingChatButton() {
   const router = useRouter();
