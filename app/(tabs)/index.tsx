@@ -141,6 +141,50 @@ export default function HomeScreen() {
           </View>
         </ThemedView>
 
+        {/* AI Chatbot */}
+        <ThemedView style={styles.section}>
+          <Link href="/chat" asChild>
+            <TouchableOpacity style={styles.aiCard}>
+              <View style={styles.aiCardHeader}>
+                <ThemedText style={styles.aiIcon}>🤖</ThemedText>
+                <View style={styles.aiCardText}>
+                  <ThemedText type="subtitle" style={styles.aiTitle}>
+                    Trợ lý AI thông minh
+                  </ThemedText>
+                  <ThemedText style={styles.aiSubtitle}>
+                    Hỏi bất kỳ câu hỏi về giai cấp & đấu tranh
+                  </ThemedText>
+                </View>
+              </View>
+              <View style={styles.aiCardFeatures}>
+                <View style={styles.aiFeature}>
+                  <ThemedText style={styles.aiFeatureIcon}>💡</ThemedText>
+                  <ThemedText style={styles.aiFeatureText}>
+                    Giải thích khái niệm
+                  </ThemedText>
+                </View>
+                <View style={styles.aiFeature}>
+                  <ThemedText style={styles.aiFeatureIcon}>📚</ThemedText>
+                  <ThemedText style={styles.aiFeatureText}>
+                    Tìm bài học liên quan
+                  </ThemedText>
+                </View>
+                <View style={styles.aiFeature}>
+                  <ThemedText style={styles.aiFeatureIcon}>⚡</ThemedText>
+                  <ThemedText style={styles.aiFeatureText}>
+                    Trả lời nhanh 24/7
+                  </ThemedText>
+                </View>
+              </View>
+              <View style={styles.aiButton}>
+                <ThemedText style={styles.aiButtonText}>
+                  Bắt đầu chat →
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
+          </Link>
+        </ThemedView>
+
         {/* Sơ đồ & Test */}
         <ThemedView style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -369,5 +413,68 @@ const styles = StyleSheet.create({
   progressFill: {
     height: "100%",
     backgroundColor: Colors.accent,
+  },
+  aiCard: {
+    padding: 20,
+    borderRadius: 16,
+    backgroundColor: Colors.accent,
+    borderWidth: 3,
+    borderColor: Colors.accentSoft,
+    shadowColor: Colors.accent,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+  aiCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    gap: 12,
+  },
+  aiIcon: {
+    fontSize: 40,
+  },
+  aiCardText: {
+    flex: 1,
+  },
+  aiTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: Colors.accentSoft,
+    marginBottom: 4,
+  },
+  aiSubtitle: {
+    fontSize: 14,
+    color: Colors.accentSoft,
+    opacity: 0.9,
+  },
+  aiCardFeatures: {
+    gap: 10,
+    marginBottom: 16,
+  },
+  aiFeature: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  aiFeatureIcon: {
+    fontSize: 18,
+  },
+  aiFeatureText: {
+    fontSize: 14,
+    color: Colors.accentSoft,
+    flex: 1,
+  },
+  aiButton: {
+    backgroundColor: Colors.accentSoft,
+    paddingVertical: 12,
+    borderRadius: 999,
+    alignItems: "center",
+  },
+  aiButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.accent,
   },
 });

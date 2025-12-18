@@ -3,8 +3,39 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import lessons from "@/data/lessons.json";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+// Helper to get image source from lessons folder
+const getImageSource = (imagePath: string) => {
+  if (!imagePath) return null;
+
+  // Remove leading slash
+  const cleanPath = imagePath.startsWith("/")
+    ? imagePath.substring(1)
+    : imagePath;
+
+  // Map of image paths to require statements
+  const imageMap: Record<string, any> = {
+    "H\u00ecnh minh h\u1ecda ch\u1ee7 \u0111\u1ea5t \u2013 n\u00f4ng d\u00e2n th\u1eddi phong ki\u1ebfn.jpg": require("@/assets/images/lessons/H\u00ecnh minh h\u1ecda ch\u1ee7 \u0111\u1ea5t \u2013 n\u00f4ng d\u00e2n th\u1eddi phong ki\u1ebfn.jpg"),
+    "H\u00ecnh m\u00f4 t\u1ea3 c\u1ea5u tr\u00fac ch\u1ee7 \u2013 qu\u1ea3n l\u00fd \u2013 c\u00f4ng nh\u00e2n.webp": require("@/assets/images/lessons/H\u00ecnh m\u00f4 t\u1ea3 c\u1ea5u tr\u00fac ch\u1ee7 \u2013 qu\u1ea3n l\u00fd \u2013 c\u00f4ng nh\u00e2n.webp"),
+    "gia-tri-thang-du.webp": require("@/assets/images/lessons/gia-tri-thang-du.webp"),
+    "giai c\u1ea5p c\u00f4ng nh\u00e2n \u0111\u1ea5u tranh.jpg": require("@/assets/images/lessons/giai c\u1ea5p c\u00f4ng nh\u00e2n \u0111\u1ea5u tranh.jpg"),
+    "C\u00f4ng c\u1ee5 \u0111\u00e1 \u2192 c\u00f4ng c\u1ee5 kim lo\u1ea1i \u2192 n\u0103ng su\u1ea5t t\u0103ng \u2192 c\u1ee7a d\u01b0 xu\u1ea5t hi\u1ec7n.jpg": require("@/assets/images/lessons/C\u00f4ng c\u1ee5 \u0111\u00e1 \u2192 c\u00f4ng c\u1ee5 kim lo\u1ea1i \u2192 n\u0103ng su\u1ea5t t\u0103ng \u2192 c\u1ee7a d\u01b0 xu\u1ea5t hi\u1ec7n.jpg"),
+    "H\u00ecnh ru\u1ed9ng \u0111\u1ea5t t\u01b0 h\u1eefu th\u1eddi phong ki\u1ebfn.jpg": require("@/assets/images/lessons/H\u00ecnh ru\u1ed9ng \u0111\u1ea5t t\u01b0 h\u1eefu th\u1eddi phong ki\u1ebfn.jpg"),
+    "no-le.jpg": require("@/assets/images/lessons/no-le.jpg"),
+    "The-Storming-of-the-Bastille.webp": require("@/assets/images/lessons/The-Storming-of-the-Bastille.webp"),
+    "2.jpg": require("@/assets/images/lessons/2.jpg"),
+    "Gustave_Courbet_-_The_Stonebreakers_-_WGA05457.jpg": require("@/assets/images/lessons/Gustave_Courbet_-_The_Stonebreakers_-_WGA05457.jpg"),
+    "quoc-hoi.jpg": require("@/assets/images/lessons/quoc-hoi.jpg"),
+    "fake-new.jpg": require("@/assets/images/lessons/fake-new.jpg"),
+    "chien-tranh-thong-tin.jpg": require("@/assets/images/lessons/chien-tranh-thong-tin.jpg"),
+    "lao-dong.jpg": require("@/assets/images/lessons/lao-dong.jpg"),
+    "hacker.webp": require("@/assets/images/lessons/hacker.webp"),
+  };
+
+  return imageMap[cleanPath] || null;
+};
 
 export default function LessonDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -76,16 +107,24 @@ export default function LessonDetailScreen() {
                 {"hasImage" in section &&
                   section.hasImage &&
                   "image" in section &&
-                  section.image && (
-                    <View style={styles.imageContainer}>
-                      <ThemedText style={styles.imageCaption}>
-                        📷{" "}
-                        {"imageCaption" in section && section.imageCaption
-                          ? section.imageCaption
-                          : "Hình minh họa"}
-                      </ThemedText>
-                    </View>
-                  )}
+                  section.image &&
+                  (() => {
+                    const imageSource = getImageSource(section.image);
+                    return imageSource ? (
+                      <View style={styles.imageContainer}>
+                        <Image
+                          source={imageSource}
+                          style={styles.lessonImage}
+                          resizeMode="contain"
+                        />
+                        <ThemedText style={styles.imageCaption}>
+                          {"imageCaption" in section && section.imageCaption
+                            ? section.imageCaption
+                            : "H\u00ecnh minh h\u1ecda"}
+                        </ThemedText>
+                      </View>
+                    ) : null;
+                  })()}
               </View>
             ))}
           </ThemedView>
@@ -168,14 +207,24 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   imageContainer: {
-    marginTop: 12,
-    padding: 12,
+    marginTop: 16,
+    marginBottom: 8,
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  lessonImage: {
+    width: "100%",
+    height: 250,
     backgroundColor: Colors.surfaceAlt,
-    borderRadius: 8,
   },
   imageCaption: {
     fontSize: 14,
     fontStyle: "italic",
     color: Colors.muted,
+    padding: 12,
+    textAlign: "center",
   },
 });
