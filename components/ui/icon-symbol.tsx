@@ -23,7 +23,12 @@ const MAPPING = {
   "chevron.right": "chevron-right",
   magnifyingglass: "search",
   "person.fill": "person",
-} as IconMapping;
+  grid: "grid-view",
+  "compass.fill": "explore",
+  sparkles: "auto-awesome",
+  cpu: "memory",
+  "bubble.left.and.bubble.right.fill": "forum",
+} as const satisfies IconMapping;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.

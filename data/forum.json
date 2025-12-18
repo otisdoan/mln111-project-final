@@ -1,0 +1,149 @@
+[
+  {
+    "id": "1",
+    "userId": "user_001",
+    "userName": "Nguyễn Văn A",
+    "userAvatar": "👨‍🎓",
+    "title": "Sự khác biệt giữa giai cấp và tầng lớp xã hội?",
+    "content": "Mình đang học bài về giai cấp nhưng chưa hiểu rõ sự khác biệt giữa giai cấp và tầng lớp xã hội. Các bạn có thể giải thích giúp mình không?",
+    "category": "Lý thuyết",
+    "timestamp": "2025-12-18T10:30:00Z",
+    "likes": 12,
+    "likedByUser": false,
+    "comments": [
+      {
+        "id": "c1",
+        "userId": "user_002",
+        "userName": "Trần Thị B",
+        "userAvatar": "👩‍🎓",
+        "content": "Giai cấp được xác định bởi quan hệ sở hữu tư liệu sản xuất, còn tầng lớp xã hội được phân theo nhiều tiêu chí như thu nhập, giáo dục, nghề nghiệp...",
+        "timestamp": "2025-12-18T11:00:00Z",
+        "likes": 8
+      },
+      {
+        "id": "c2",
+        "userId": "user_003",
+        "userName": "Lê Văn C",
+        "userAvatar": "👨‍💼",
+        "content": "Đúng rồi! Giai cấp mang tính khách quan về kinh tế, còn tầng lớp có thể thay đổi linh hoạt hơn.",
+        "timestamp": "2025-12-18T11:15:00Z",
+        "likes": 5
+      }
+    ],
+    "tags": ["giai-cấp", "lý-thuyết", "cơ-bản"]
+  },
+  {
+    "id": "2",
+    "userId": "user_004",
+    "userName": "Phạm Thị D",
+    "userAvatar": "👩‍🏫",
+    "title": "Vai trò của giai cấp công nhân trong thời đại 4.0",
+    "content": "Với sự phát triển của công nghệ số và tự động hóa, vai trò của giai cấp công nhân truyền thống có thay đổi không? Mọi người nghĩ sao về vấn đề này?",
+    "category": "Thảo luận",
+    "timestamp": "2025-12-17T14:20:00Z",
+    "likes": 25,
+    "likedByUser": true,
+    "comments": [
+      {
+        "id": "c3",
+        "userId": "user_005",
+        "userName": "Hoàng Văn E",
+        "userAvatar": "👨‍🔧",
+        "content": "Công nhân vẫn là lực lượng sản xuất chính, nhưng cần nâng cao trình độ và kỹ năng số để thích ứng với công nghệ mới.",
+        "timestamp": "2025-12-17T15:00:00Z",
+        "likes": 10
+      }
+    ],
+    "tags": ["công-nhân", "công-nghệ-4.0", "thảo-luận"]
+  },
+  {
+    "id": "3",
+    "userId": "user_006",
+    "userName": "Đỗ Thị F",
+    "userAvatar": "👩‍💻",
+    "title": "Ôn thi: Câu hỏi về đấu tranh giai cấp ở Việt Nam",
+    "content": "Mọi người cho mình hỏi về đặc điểm đấu tranh giai cấp ở Việt Nam trong thời kỳ quá độ lên CNXH với. Có tài liệu nào hay không ạ?",
+    "category": "Ôn tập",
+    "timestamp": "2025-12-16T09:00:00Z",
+    "likes": 18,
+    "likedByUser": false,
+    "comments": [
+      {
+        "id": "c4",
+        "userId": "user_007",
+        "userName": "Vũ Văn G",
+        "userAvatar": "📚",
+        "content": "Bạn nên xem bài học số 7 trong app này, có giải thích rất chi tiết về quá độ CNXH ở VN!",
+        "timestamp": "2025-12-16T10:30:00Z",
+        "likes": 12
+      },
+      {
+        "id": "c5",
+        "userId": "user_008",
+        "userName": "Mai Thị H",
+        "userAvatar": "👩‍🎓",
+        "content": "Thêm về văn kiện Đại hội XIII của Đảng cũng có nội dung liên quan nhé!",
+        "timestamp": "2025-12-16T11:00:00Z",
+        "likes": 7
+      }
+    ],
+    "tags": ["việt-nam", "ôn-tập", "thi"]
+  },
+  {
+    "id": "4",
+    "userId": "user_009",
+    "userName": "Ngô Văn I",
+    "userAvatar": "👨‍🏫",
+    "title": "Giải thích khái niệm giá trị thặng dư cho người mới học",
+    "content": "Mình mới bắt đầu học môn này, khái niệm giá trị thặng dư hơi khó hiểu. Có ai có cách giải thích đơn giản hơn không ạ?",
+    "category": "Lý thuyết",
+    "timestamp": "2025-12-15T16:45:00Z",
+    "likes": 30,
+    "likedByUser": true,
+    "comments": [
+      {
+        "id": "c6",
+        "userId": "user_010",
+        "userName": "Bùi Thị K",
+        "userAvatar": "👩‍🏫",
+        "content": "Giá trị thặng dư = Giá trị công nhân tạo ra - Tiền lương công nhân nhận được. Đây là phần giá trị bị chủ chiếm đoạt.",
+        "timestamp": "2025-12-15T17:00:00Z",
+        "likes": 20
+      },
+      {
+        "id": "c7",
+        "userId": "user_011",
+        "userName": "Đinh Văn L",
+        "userAvatar": "💡",
+        "content": "VD: Bạn làm ra sản phẩm trị giá 1 triệu, chủ trả bạn 200k, lấy 800k. 800k đó chính là giá trị thặng dư!",
+        "timestamp": "2025-12-15T17:15:00Z",
+        "likes": 25
+      }
+    ],
+    "tags": ["giá-trị-thặng-dư", "cơ-bản", "lý-thuyết"]
+  },
+  {
+    "id": "5",
+    "userId": "user_012",
+    "userName": "Hồ Thị M",
+    "userAvatar": "👩‍🔬",
+    "title": "Liên hệ thực tế: Bóc lột lao động trong nền kinh tế gig",
+    "content": "Làm thế nào để nhận diện và phân tích hiện tượng bóc lột lao động trong các nền tảng công nghệ như Grab, Gojek, shipper...?",
+    "category": "Thảo luận",
+    "timestamp": "2025-12-14T13:20:00Z",
+    "likes": 42,
+    "likedByUser": false,
+    "comments": [
+      {
+        "id": "c8",
+        "userId": "user_013",
+        "userName": "Lý Văn N",
+        "userAvatar": "🚗",
+        "content": "Tài xế công nghệ không có hợp đồng chính thức, không có bảo hiểm, phải chịu phí nền tảng cao. Đây là hình thức bóc lột mới.",
+        "timestamp": "2025-12-14T14:00:00Z",
+        "likes": 18
+      }
+    ],
+    "tags": ["thực-tế", "kinh-tế-gig", "bóc-lột"]
+  }
+]

@@ -50,12 +50,20 @@ export default function AuthScreen() {
         setError(error.message);
         Alert.alert("Lỗi", error.message);
       } else {
-        // Success - AuthContext sẽ tự động redirect
+        // Success - redirect to home
         if (isSignUp) {
           Alert.alert(
             "Thành công",
-            "Đăng ký thành công! Bạn đã được đăng nhập tự động."
+            "Đăng ký thành công! Bạn đã được đăng nhập tự động.",
+            [
+              {
+                text: "OK",
+                onPress: () => router.replace("/"),
+              },
+            ]
           );
+        } else {
+          router.replace("/");
         }
       }
     } catch (err: any) {
@@ -81,7 +89,8 @@ export default function AuthScreen() {
         Alert.alert("Lỗi đăng nhập Google", error.message);
       } else {
         console.log("✅ Google login initiated successfully");
-        // Success - AuthGuard sẽ tự động redirect
+        // Success - redirect to home
+        router.replace("/");
       }
     } catch (err: any) {
       console.error("❌ Google login exception:", err);

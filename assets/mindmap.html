@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mind Map</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: #fff8f0;
+        overflow: hidden;
+      }
+      #mindmap {
+        width: 100vw;
+        height: 100vh;
+      }
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+      .markmap-node {
+        cursor: pointer;
+      }
+      .markmap-node-circle {
+        fill: #c41e3a;
+      }
+      .markmap-node-text {
+        fill: #1a1a1a;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .markmap-link {
+        stroke: #d4af37;
+        stroke-width: 2;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.15.4"></script>
+  </head>
+  <body>
+    <svg id="mindmap"></svg>
+
+    <script>
+      const data = {
+        type: "heading",
+        depth: 0,
+        content: "🎯 Giai cấp & Đấu tranh giai cấp",
+        children: [
+          {
+            type: "heading",
+            depth: 1,
+            content: "📌 Giai cấp",
+            payload: {
+              tooltip: "Định nghĩa, đặc trưng và thực chất quan hệ giai cấp.",
+              link: "/lesson/giai-cap",
+            },
+          },
+          {
+            type: "heading",
+            depth: 1,
+            content: "📌 Nguồn gốc",
+            payload: {
+              tooltip:
+                "Nguồn gốc sâu xa và trực tiếp; con đường hình thành; điều kiện phân hóa.",
+              link: "/lesson/nguon-goc-giai-cap",
+            },
+          },
+          {
+            type: "heading",
+            depth: 1,
+            content: "📌 Kết cấu xã hội – giai cấp",
+            payload: {
+              tooltip:
+                "Thành phần giai cấp cơ bản, không cơ bản, tầng lớp xã hội; tính vận động.",
+              link: "/lesson/ket-cau-xa-hoi-giai-cap",
+            },
+          },
+          {
+            type: "heading",
+            depth: 1,
+            content: "📌 Đấu tranh giai cấp",
+            payload: {
+              tooltip:
+                "Định nghĩa, tính tất yếu, đặc trưng, vai trò của đấu tranh giai cấp.",
+              link: "/lesson/dau-tranh-giai-cap",
+            },
+            children: [
+              {
+                type: "heading",
+                depth: 2,
+                content: "📌 Vai trò",
+                payload: {
+                  tooltip:
+                    "Động lực trực tiếp của lịch sử các xã hội có giai cấp.",
+                  link: "/lesson/dau-tranh-giai-cap",
+                },
+              },
+              {
+                type: "heading",
+                depth: 2,
+                content: "📌 Đấu tranh vô sản",
+                payload: {
+                  tooltip:
+                    "Ba hình thức đấu tranh trước khi giành chính quyền; nhiệm vụ sau khi giành chính quyền.",
+                  link: "/lesson/dau-tranh-vo-san",
+                },
+                children: [
+                  {
+                    type: "heading",
+                    depth: 3,
+                    content: "📌 Thời kỳ quá độ",
+                    payload: {
+                      tooltip:
+                        "Nội dung, hình thức đấu tranh thời kỳ quá độ lên CNXH.",
+                      link: "/lesson/dau-tranh-vo-san",
+                    },
+                    children: [
+                      {
+                        type: "heading",
+                        depth: 4,
+                        content: "📌 Việt Nam quá độ",
+                        payload: {
+                          tooltip:
+                            "Đặc điểm, nhiệm vụ, hình thức đấu tranh giai cấp thời kỳ quá độ ở Việt Nam.",
+                          link: "/lesson/thoi-ky-qua-do-viet-nam",
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const { Markmap, loadCSS, loadJS } = window.markmap;
+
+      // Initialize markmap
+      const svg = document.getElementById("mindmap");
+      const mm = Markmap.create(svg, {
+        color: (node) => {
+          const colors = ["#c41e3a", "#d4af37", "#8b1a2b", "#b8860b"];
+          return colors[node.state.depth % colors.length];
+        },
+        paddingX: 20,
+        spacingVertical: 20,
+        spacingHorizontal: 120,
+        duration: 500,
+        maxWidth: 300,
+        initialExpandLevel: 3,
+      });
+
+      // Render the mind map
+      mm.setData(data);
+      mm.fit();
+
+      // Handle node clicks (send message to React Native)
+      svg.addEventListener("click", (e) => {
+        // Find the clicked g element (node group)
+        let target = e.target;
+        while (target && target.tagName !== "g") {
+          target = target.parentElement;
+        }
+
+        // Check if it's a markmap node
+        if (target && target.classList.contains("markmap-node")) {
+          const nodeData = target.__data__;
+          console.log("Node clicked:", nodeData);
+
+          if (nodeData?.data?.payload?.link) {
+            console.log("Navigating to:", nodeData.data.payload.link);
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({
+                  type: "navigate",
+                  link: nodeData.data.payload.link,
+                })
+              );
+            }
+          }
+        }
+      });
+
+      // Auto-fit on window resize
+      window.addEventListener("resize", () => {
+        mm.fit();
+      });
+    </script>
+  </body>
+</html>

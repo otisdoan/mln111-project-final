@@ -3,7 +3,13 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import videos from "@/data/videos.json";
 import { Link, Stack } from "expo-router";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function VideoIndexScreen() {
@@ -34,10 +40,20 @@ export default function VideoIndexScreen() {
               {videos.map((video) => (
                 <Link key={video.id} href={`/video/${video.slug}`} asChild>
                   <TouchableOpacity style={styles.videoCard}>
-                    <View style={styles.thumbnailPlaceholder}>
-                      <ThemedText style={styles.durationBadge}>
-                        {video.duration}
-                      </ThemedText>
+                    <View style={styles.thumbnailContainer}>
+                      <Image
+                        source={{ uri: video.thumbnail }}
+                        style={styles.thumbnail}
+                        resizeMode="cover"
+                      />
+                      <View style={styles.playIconOverlay}>
+                        <ThemedText style={styles.playIcon}>▶️</ThemedText>
+                      </View>
+                      <View style={styles.durationBadge}>
+                        <ThemedText style={styles.durationText}>
+                          {video.duration}
+                        </ThemedText>
+                      </View>
                     </View>
                     <View style={styles.videoInfo}>
                       <ThemedText
@@ -110,20 +126,42 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 5,
   },
-  thumbnailPlaceholder: {
+  thumbnailContainer: {
     width: "100%",
     height: 200,
+    position: "relative",
     backgroundColor: Colors.border,
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-    padding: 12,
+  },
+  thumbnail: {
+    width: "100%",
+    height: "100%",
+  },
+  playIconOverlay: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateX: -20 }, { translateY: -20 }],
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playIcon: {
+    fontSize: 16,
   },
   durationBadge: {
+    position: "absolute",
+    bottom: 12,
+    right: 12,
     backgroundColor: "rgba(0,0,0,0.7)",
-    color: "#FFFFFF",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
+  },
+  durationText: {
+    color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "600",
   },

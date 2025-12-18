@@ -2,8 +2,16 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import lessons from "@/data/lessons.json";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import * as Speech from "expo-speech";
+import { useState } from "react";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Helper to get image source from lessons folder
@@ -39,7 +47,15 @@ const getImageSource = (imagePath: string) => {
 
 export default function LessonDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
+  const router = useRouter();
   const lesson = lessons.find((l) => l.slug === slug);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Find current lesson index
+  const currentIndex = lessons.findIndex((l) => l.slug === slug);
+  const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
+  const nextLesson =
+    currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
 
   if (!lesson) {
     return (
@@ -48,6 +64,45 @@ export default function LessonDetailScreen() {
       </ThemedView>
     );
   }
+
+  // Build text content from lesson sections
+  const buildLessonText = () => {
+    let text = `${lesson.title}. `;
+    lesson.sections.forEach((section) => {
+      if ("heading" in section && section.heading) {
+        text += `${section.heading}. `;
+      }
+      if ("body" in section && section.body) {
+        text += `${section.body}. `;
+      }
+      if ("bullets" in section && section.bullets) {
+        section.bullets.forEach((bullet) => {
+          text += `${bullet}. `;
+        });
+      }
+    });
+    return text;
+  };
+
+  const handleSpeak = async () => {
+    if (isSpeaking) {
+      // Stop speaking
+      await Speech.stop();
+      setIsSpeaking(false);
+    } else {
+      // Start speaking
+      const text = buildLessonText();
+      setIsSpeaking(true);
+      Speech.speak(text, {
+        language: "vi-VN",
+        pitch: 1.0,
+        rate: 0.9,
+        onDone: () => setIsSpeaking(false),
+        onStopped: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false),
+      });
+    }
+  };
 
   return (
     <>
@@ -62,9 +117,23 @@ export default function LessonDetailScreen() {
       >
         <ScrollView style={styles.container}>
           <ThemedView style={styles.section}>
-            <ThemedText type="title" style={styles.lessonTitle}>
-              {lesson.title}
-            </ThemedText>
+            <View style={styles.titleContainer}>
+              <ThemedText type="title" style={styles.lessonTitle}>
+                {lesson.title}
+              </ThemedText>
+
+              <TouchableOpacity
+                style={[
+                  styles.speakButton,
+                  isSpeaking && styles.speakButtonActive,
+                ]}
+                onPress={handleSpeak}
+              >
+                <ThemedText style={styles.speakButtonText}>
+                  {isSpeaking ? "⏸️ Dừng đọc" : "🔊 Đọc bài"}
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
 
             {lesson.sections.map((section, index) => (
               <View
@@ -115,7 +184,7 @@ export default function LessonDetailScreen() {
                         <Image
                           source={imageSource}
                           style={styles.lessonImage}
-                          resizeMode="contain"
+                          resizeMode="cover"
                         />
                         <ThemedText style={styles.imageCaption}>
                           {"imageCaption" in section && section.imageCaption
@@ -127,6 +196,37 @@ export default function LessonDetailScreen() {
                   })()}
               </View>
             ))}
+
+            {/* Navigation Buttons */}
+            <View style={styles.navigationContainer}>
+              {prevLesson && (
+                <TouchableOpacity
+                  style={[styles.navButton, styles.prevButton]}
+                  onPress={() => router.push(`/lesson/${prevLesson.slug}`)}
+                >
+                  <ThemedText style={styles.navButtonText}>
+                    ← Bài trước
+                  </ThemedText>
+                  <ThemedText style={styles.navLessonTitle} numberOfLines={1}>
+                    {prevLesson.title}
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
+
+              {nextLesson && (
+                <TouchableOpacity
+                  style={[styles.navButton, styles.nextButton]}
+                  onPress={() => router.push(`/lesson/${nextLesson.slug}`)}
+                >
+                  <ThemedText style={styles.navButtonText}>
+                    Bài tiếp →
+                  </ThemedText>
+                  <ThemedText style={styles.navLessonTitle} numberOfLines={1}>
+                    {nextLesson.title}
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
+            </View>
           </ThemedView>
         </ScrollView>
       </SafeAreaView>
@@ -143,11 +243,36 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "transparent",
   },
+  titleContainer: {
+    marginBottom: 24,
+  },
   lessonTitle: {
     fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 24,
+    marginBottom: 12,
     color: Colors.primary,
+  },
+  speakButton: {
+    backgroundColor: Colors.accent,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: Colors.accent,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  speakButtonActive: {
+    backgroundColor: Colors.accentSoft,
+  },
+  speakButtonText: {
+    color: Colors.surface,
+    fontSize: 15,
+    fontWeight: "600",
   },
   sectionCard: {
     padding: 18,
@@ -217,7 +342,7 @@ const styles = StyleSheet.create({
   },
   lessonImage: {
     width: "100%",
-    height: 250,
+    height: 400,
     backgroundColor: Colors.surfaceAlt,
   },
   imageCaption: {
@@ -226,5 +351,41 @@ const styles = StyleSheet.create({
     color: Colors.muted,
     padding: 12,
     textAlign: "center",
+  },
+  navigationContainer: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 32,
+    marginBottom: 16,
+  },
+  navButton: {
+    flex: 1,
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: Colors.accentSoft,
+    shadowColor: Colors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  prevButton: {
+    alignItems: "flex-start",
+  },
+  nextButton: {
+    alignItems: "flex-end",
+  },
+  navButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.accent,
+    marginBottom: 4,
+  },
+  navLessonTitle: {
+    fontSize: 13,
+    color: Colors.muted,
+    fontWeight: "500",
   },
 });

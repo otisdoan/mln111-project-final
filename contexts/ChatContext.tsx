@@ -3,12 +3,8 @@
  */
 
 import quickRepliesData from "@/data/quick-replies.json";
-import {
-  generateResponse,
-  isQuestionInScope,
-  validateQuestion,
-} from "@/lib/ai/gemini";
-import { FALLBACK_RESPONSES, GREETING_MESSAGE } from "@/lib/ai/prompts";
+import { generateResponse, validateQuestion } from "@/lib/ai/openrouter";
+import { GREETING_MESSAGE } from "@/lib/ai/prompts";
 import {
   buildContextString,
   getLessonMetadata,
@@ -16,7 +12,13 @@ import {
 } from "@/lib/ai/rag";
 import { ChatContextType, Message, QuickReply } from "@/types/chat";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const CHAT_HISTORY_KEY = "@mln111_chat_history";
 const MAX_MESSAGES = 50; // Giới hạn số message lưu
@@ -28,20 +30,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [quickReplies, setQuickReplies] = useState<QuickReply[]>([]);
 
-  // Load chat history from AsyncStorage
-  useEffect(() => {
-    loadChatHistory();
-    loadQuickReplies();
-  }, []);
-
-  // Save chat history whenever messages change
-  useEffect(() => {
-    if (messages.length > 0) {
-      saveChatHistory();
-    }
-  }, [messages]);
-
-  const loadChatHistory = async () => {
+  const loadChatHistory = useCallback(async () => {
     try {
       const stored = await AsyncStorage.getItem(CHAT_HISTORY_KEY);
       if (stored) {
@@ -60,9 +49,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       console.error("Error loading chat history:", error);
       addGreetingMessage();
     }
-  };
+  }, []);
 
-  const saveChatHistory = async () => {
+  const saveChatHistory = useCallback(async () => {
     try {
       // Keep only last MAX_MESSAGES
       const toSave = messages.slice(-MAX_MESSAGES);
@@ -70,7 +59,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Error saving chat history:", error);
     }
-  };
+  }, [messages]);
+
+  // Load chat history from AsyncStorage
+  useEffect(() => {
+    loadChatHistory();
+    loadQuickReplies();
+  }, [loadChatHistory]);
+
+  // Save chat history whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      saveChatHistory();
+    }
+  }, [messages, saveChatHistory]);
 
   const loadQuickReplies = () => {
     // Load random 4 suggestions from each category
@@ -132,27 +134,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
 
     try {
-      // Check if question is in scope
-      if (!isQuestionInScope(content)) {
-        // Out of scope - return fallback
-        const fallback =
-          FALLBACK_RESPONSES[
-            Math.floor(Math.random() * FALLBACK_RESPONSES.length)
-          ];
-        const aiMsg: Message = {
-          id: "ai-" + Date.now(),
-          role: "assistant",
-          content: fallback,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, aiMsg]);
-        setLoading(false);
-
-        // Refresh quick replies
-        loadQuickReplies();
-        return;
-      }
-
       // Search relevant lessons (RAG)
       const relevantLessons = searchRelevantLessons(content, 3);
       const context = buildContextString(relevantLessons);

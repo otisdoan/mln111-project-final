@@ -5,8 +5,6 @@
 import { Colors } from "@/constants/theme";
 import { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -30,34 +28,29 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={100}
-    >
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Hỏi về giai cấp, đấu tranh..."
-          placeholderTextColor={Colors.muted}
-          value={text}
-          onChangeText={setText}
-          multiline
-          maxLength={500}
-          editable={!disabled}
-          onSubmitEditing={handleSend}
-        />
-        <TouchableOpacity
-          style={[
-            styles.sendButton,
-            (!text.trim() || disabled) && styles.sendButtonDisabled,
-          ]}
-          onPress={handleSend}
-          disabled={!text.trim() || disabled}
-        >
-          <Text style={styles.sendIcon}>📤</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Hỏi về giai cấp, đấu tranh..."
+        placeholderTextColor={Colors.muted}
+        value={text}
+        onChangeText={setText}
+        multiline
+        maxLength={500}
+        editable={!disabled}
+        onSubmitEditing={handleSend}
+      />
+      <TouchableOpacity
+        style={[
+          styles.sendButton,
+          (!text.trim() || disabled) && styles.sendButtonDisabled,
+        ]}
+        onPress={handleSend}
+        disabled={!text.trim() || disabled}
+      >
+        <Text style={styles.sendIcon}>📤</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 

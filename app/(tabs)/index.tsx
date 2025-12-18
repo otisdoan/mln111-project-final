@@ -14,13 +14,6 @@ import {
   View,
 } from "react-native";
 
-const roadmap = [
-  "Khái niệm Giai cấp",
-  "Nguồn gốc giai cấp",
-  "Đấu tranh giai cấp",
-  "Đấu tranh vô sản & thời kỳ quá độ",
-];
-
 const bannerImages = [
   require("@/assets/images/banner1.jpg"),
   require("@/assets/images/banner2.jpg"),
@@ -29,7 +22,8 @@ const bannerImages = [
 ];
 
 export default function HomeScreen() {
-  const featuredLessons = lessons.slice(0, 4);
+  // Show all lessons instead of just 4
+  const allLessons = lessons;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const fadeAnims = useRef(
     bannerImages.map(() => new Animated.Value(0))
@@ -68,7 +62,7 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
+      <StatusBar style="light" />
       <ScrollView style={styles.container}>
         {/* Hero Banner Carousel */}
         <View style={styles.heroBannerContainer}>
@@ -115,13 +109,14 @@ export default function HomeScreen() {
                 Lộ trình học tập
               </ThemedText>
               <ThemedText style={styles.sectionSubtitle}>
-                4 chặng chính giúp nắm chắc Giai cấp & Đấu tranh giai cấp.
+                {allLessons.length} bài học giúp nắm chắc Giai cấp & Đấu tranh
+                giai cấp.
               </ThemedText>
             </View>
           </View>
 
           <View style={styles.grid}>
-            {featuredLessons.map((lesson, idx) => (
+            {allLessons.map((lesson, idx) => (
               <Link key={lesson.id} href={`/lesson/${lesson.slug}`} asChild>
                 <TouchableOpacity style={styles.card}>
                   <View style={styles.pill}>
@@ -130,7 +125,7 @@ export default function HomeScreen() {
                     </ThemedText>
                   </View>
                   <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-                    {roadmap[idx] ?? lesson.title}
+                    {lesson.title}
                   </ThemedText>
                   <ThemedText style={styles.muted}>
                     Trạng thái: {lesson.status}
@@ -199,29 +194,6 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.grid}>
-            <Link href="/game" asChild>
-              <TouchableOpacity style={[styles.card, styles.gameCard]}>
-                <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-                  🎮 Trận Chiến Tri Thức
-                </ThemedText>
-                <ThemedText style={styles.muted}>
-                  Game quiz hấp dẫn - Học mà vui!
-                </ThemedText>
-                <View
-                  style={[
-                    styles.pill,
-                    { marginTop: 12, backgroundColor: Colors.accent },
-                  ]}
-                >
-                  <ThemedText
-                    style={[styles.pillText, { color: Colors.accentSoft }]}
-                  >
-                    MỚI!
-                  </ThemedText>
-                </View>
-              </TouchableOpacity>
-            </Link>
-
             <Link href="/mindmap" asChild>
               <TouchableOpacity style={styles.card}>
                 <ThemedText type="defaultSemiBold" style={styles.cardTitle}>

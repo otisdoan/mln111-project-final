@@ -36,7 +36,29 @@ export default function TabLayout() {
           options={{
             title: "Khám phá",
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="magnifyingglass" color={color} />
+              <IconSymbol size={28} name="compass.fill" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="forum"
+          options={{
+            title: "Diễn đàn",
+            tabBarIcon: ({ color }) => (
+              <IconSymbol
+                size={28}
+                name="bubble.left.and.bubble.right.fill"
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="ai-usage"
+          options={{
+            title: "AI Usage",
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="cpu" color={color} />
             ),
           }}
         />

@@ -3,14 +3,9 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import videos from "@/data/videos.json";
 import { Stack, useLocalSearchParams } from "expo-router";
-import {
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
 
 export default function VideoDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -24,10 +19,31 @@ export default function VideoDetailScreen() {
     );
   }
 
-  const openYouTube = () => {
-    const url = `https://www.youtube.com/watch?v=${video.youtubeId}`;
-    Linking.openURL(url);
-  };
+  const youtubeEmbedUrl = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=0&modestbranding=1&playsinline=1&rel=0`;
+
+  const youtubeHtml = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <style>
+          * { margin: 0; padding: 0; }
+          body { background: #000; }
+          .video-container { position: relative; width: 100%; height: 100vh; }
+          iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        </style>
+      </head>
+      <body>
+        <div class="video-container">
+          <iframe 
+            src="${youtubeEmbedUrl}" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </body>
+    </html>
+  `;
 
   return (
     <>
@@ -42,15 +58,20 @@ export default function VideoDetailScreen() {
       >
         <ScrollView style={styles.container}>
           <ThemedView style={styles.section}>
-            {/* Video Player Placeholder */}
-            <TouchableOpacity
-              style={styles.videoPlayerPlaceholder}
-              onPress={openYouTube}
-            >
-              <ThemedText style={styles.playButton}>
-                ▶ Xem trên YouTube
-              </ThemedText>
-            </TouchableOpacity>
+            {/* YouTube Video Player */}
+            <View style={styles.videoContainer}>
+              <WebView
+                style={styles.videoPlayer}
+                source={{ html: youtubeHtml }}
+                allowsFullscreenVideo={true}
+                allowsInlineMediaPlayback={true}
+                mediaPlaybackRequiresUserAction={false}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                scrollEnabled={false}
+                bounces={false}
+              />
+            </View>
 
             {/* Video Info */}
             <ThemedText type="title" style={styles.videoTitle}>
@@ -118,19 +139,17 @@ const styles = StyleSheet.create({
   section: {
     padding: 20,
   },
-  videoPlayerPlaceholder: {
+  videoContainer: {
     width: "100%",
-    height: 200,
+    height: 220,
     backgroundColor: "#000000",
     borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
+    overflow: "hidden",
     marginBottom: 20,
   },
-  playButton: {
-    color: Colors.accentSoft,
-    fontSize: 18,
-    fontWeight: "600",
+  videoPlayer: {
+    width: "100%",
+    height: "100%",
   },
   videoTitle: {
     fontSize: 24,

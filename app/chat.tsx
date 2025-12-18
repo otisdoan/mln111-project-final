@@ -15,6 +15,8 @@ import { useEffect, useRef } from "react";
 import {
   Alert,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -73,41 +75,49 @@ export default function ChatScreen() {
         style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}
         edges={["top"]}
       >
-        <ChatHeader />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
+          <ChatHeader />
 
-        {/* Clear chat button */}
-        <View style={styles.actionBar}>
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={handleClearChat}
-          >
-            <ThemedText style={styles.clearButtonText}>🗑️ Xóa chat</ThemedText>
-          </TouchableOpacity>
-        </View>
+          {/* Clear chat button */}
+          <View style={styles.actionBar}>
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={handleClearChat}
+            >
+              <ThemedText style={styles.clearButtonText}>
+                🗑️ Xóa chat
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
 
-        {/* Messages list */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ChatBubble message={item} />}
-          contentContainerStyle={styles.messagesList}
-          ListEmptyComponent={renderEmpty}
-          ListFooterComponent={
-            loading ? <TypingIndicator /> : <View style={{ height: 8 }} />
-          }
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
-        />
+          {/* Messages list */}
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <ChatBubble message={item} />}
+            contentContainerStyle={styles.messagesList}
+            ListEmptyComponent={renderEmpty}
+            ListFooterComponent={
+              loading ? <TypingIndicator /> : <View style={{ height: 8 }} />
+            }
+            onContentSizeChange={() =>
+              flatListRef.current?.scrollToEnd({ animated: true })
+            }
+          />
 
-        {/* Quick replies */}
-        {quickReplies.length > 0 && !loading && (
-          <QuickReplies replies={quickReplies} onSelect={sendMessage} />
-        )}
+          {/* Quick replies */}
+          {quickReplies.length > 0 && !loading && (
+            <QuickReplies replies={quickReplies} onSelect={sendMessage} />
+          )}
 
-        {/* Input */}
-        <ChatInput onSend={sendMessage} disabled={loading} />
+          {/* Input */}
+          <ChatInput onSend={sendMessage} disabled={loading} />
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </>
   );

@@ -12,54 +12,89 @@ const genAI = new GoogleGenerativeAI(
 );
 
 /**
- * Generate AI response using Gemini
+ * Generate AI response using Gemini with retry and fallback
  */
 export async function generateResponse(
   context: string,
   question: string,
   lessons?: { slug: string; title: string }[]
 ): Promise<string> {
-  try {
-    // Check if API key exists
-    if (!process.env.EXPO_PUBLIC_GEMINI_API_KEY) {
-      console.error("❌ Missing EXPO_PUBLIC_GEMINI_API_KEY");
-      return "Xin lỗi, hệ thống AI chưa được cấu hình. Vui lòng liên hệ quản trị viên.";
-    }
-
-    // Get the generative model
-    // Using gemini-2.0-flash (better quota than 2.5-flash: 20 req/day)
-    // Gemini 2.0 Flash has higher free tier limits
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-    // Build prompt with lesson metadata for link generation
-    const prompt = buildPrompt(context, question, lessons);
-
-    // Generate response
-    console.log("🤖 Calling Gemini API...");
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    console.log("✅ Gemini response received");
-    return text;
-  } catch (error: any) {
-    console.error("❌ Gemini API Error:", error);
-
-    // Handle specific errors
-    if (error.message?.includes("API key")) {
-      return "Xin lỗi, API key không hợp lệ. Vui lòng kiểm tra cấu hình.";
-    }
-
-    if (error.message?.includes("quota")) {
-      return "Xin lỗi, đã vượt quá giới hạn sử dụng API. Vui lòng thử lại sau.";
-    }
-
-    if (error.message?.includes("network")) {
-      return "Xin lỗi, không thể kết nối đến server AI. Vui lòng kiểm tra kết nối internet.";
-    }
-
-    return "Xin lỗi, đã có lỗi xảy ra khi xử lý câu hỏi. Vui lòng thử lại.";
+  // Check if API key exists
+  if (!process.env.EXPO_PUBLIC_GEMINI_API_KEY) {
+    console.error("❌ Missing EXPO_PUBLIC_GEMINI_API_KEY");
+    return "Xin lỗi, hệ thống AI chưa được cấu hình. Vui lòng liên hệ quản trị viên.";
   }
+
+  // Build prompt with lesson metadata for link generation
+  const prompt = buildPrompt(context, question, lessons);
+
+  // Try multiple models in order (lite models have better availability)
+  const modelsToTry = [
+    "gemini-2.0-flash-lite",
+    "gemini-2.5-flash",
+    "gemini-exp-1206",
+  ];
+
+  for (let i = 0; i < modelsToTry.length; i++) {
+    const modelName = modelsToTry[i];
+    try {
+      // Only log first attempt to reduce console spam
+      if (i === 0) {
+        console.log(`🤖 Calling AI...`);
+      }
+
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      console.log(`✅ AI response received`);
+      return text;
+    } catch (error: any) {
+      // Only log error if this is the last model (all failed)
+      if (i === modelsToTry.length - 1) {
+        console.error(
+          `❌ All AI models failed. Full error:`,
+          error.message || error
+        );
+      }
+
+      // If this is the last model, return error message
+      if (i === modelsToTry.length - 1) {
+        // Handle specific errors
+        if (error.message?.includes("API key")) {
+          return "Xin lỗi, API key không hợp lệ. Vui lòng kiểm tra cấu hình.";
+        }
+
+        if (
+          error.message?.includes("quota") ||
+          error.message?.includes("429") ||
+          error.message?.includes("RESOURCE_EXHAUSTED")
+        ) {
+          return "⏰ API đã vượt quota hôm nay.\n\n💡 Giải pháp:\n- Đợi đến ngày mai (quota reset 0h UTC)\n- Hoặc tạo API key mới tại: https://aistudio.google.com/apikey\n- Hoặc nâng cấp lên Paid Plan ($0.075/1M tokens)";
+        }
+
+        if (
+          error.message?.includes("overloaded") ||
+          error.message?.includes("503")
+        ) {
+          return "Xin lỗi, server AI đang quá tải. Vui lòng thử lại sau vài giây. ⏳";
+        }
+
+        if (error.message?.includes("network")) {
+          return "Xin lỗi, không thể kết nối đến server AI. Vui lòng kiểm tra kết nối internet. 📡";
+        }
+
+        return "Xin lỗi, đã có lỗi xảy ra khi xử lý câu hỏi. Vui lòng thử lại. 🔄";
+      }
+
+      // Try next model after a short delay
+      console.log(`⏳ Trying next model...`);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+
+  return "Xin lỗi, không thể kết nối đến AI. Vui lòng thử lại sau. 🔄";
 }
 
 /**
@@ -75,8 +110,8 @@ export function validateQuestion(question: string): {
     return { valid: false, error: "Câu hỏi không được để trống" };
   }
 
-  if (trimmed.length < 3) {
-    return { valid: false, error: "Câu hỏi quá ngắn (tối thiểu 3 ký tự)" };
+  if (trimmed.length < 2) {
+    return { valid: false, error: "Câu hỏi quá ngắn (tối thiểu 2 ký tự)" };
   }
 
   if (trimmed.length > 500) {

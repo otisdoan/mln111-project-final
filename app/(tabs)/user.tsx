@@ -9,7 +9,12 @@
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import * as FileSystem from "expo-file-system/legacy";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -24,6 +29,118 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function UserScreen() {
   const router = useRouter();
   const { user, loading, signOut } = useAuth();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      loadAvatar();
+    }
+  }, [user, loadAvatar]);
+
+  const loadAvatar = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("avatar_url")
+        .eq("id", user.id)
+        .single();
+
+      if (data && (data as any).avatar_url) {
+        setAvatarUrl((data as any).avatar_url);
+      }
+    } catch (error) {
+      console.log("Error loading avatar:", error);
+    }
+  };
+
+  const pickImage = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== "granted") {
+        Alert.alert("Yêu cầu quyền", "Cần quyền truy cập thư viện ảnh");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images",
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        await uploadAvatar(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+      Alert.alert("Lỗi", "Không thể chọn ảnh");
+    }
+  };
+
+  const uploadAvatar = async (uri: string) => {
+    if (!user) return;
+
+    try {
+      setUploading(true);
+
+      // Read file as base64
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: "base64",
+      });
+
+      const fileExt = uri.split(".").pop() || "jpg";
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      const contentType = `image/${fileExt}`;
+
+      // Convert base64 to blob for upload
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: contentType });
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, blob, {
+          contentType,
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      const publicUrl = urlData.publicUrl;
+
+      // Update profile in database
+      const { error: updateError } = await supabase.from("profiles").upsert({
+        id: user.id,
+        avatar_url: publicUrl,
+        updated_at: new Date().toISOString(),
+      });
+
+      if (updateError) throw updateError;
+
+      setAvatarUrl(publicUrl);
+      Alert.alert("Thành công", "Đã cập nhật ảnh đại diện");
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      Alert.alert("Lỗi", "Không thể tải ảnh lên");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSignOut = async () => {
     Alert.alert("Đăng xuất", "Bạn có chắc chắn muốn đăng xuất?", [
@@ -45,6 +162,7 @@ export default function UserScreen() {
         style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}
         edges={["top"]}
       >
+        <StatusBar style="dark" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.accent} />
           <ThemedText style={styles.loadingText}>Đang tải...</ThemedText>
@@ -60,6 +178,7 @@ export default function UserScreen() {
         style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}
         edges={["top"]}
       >
+        <StatusBar style="dark" />
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -130,6 +249,7 @@ export default function UserScreen() {
       style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}
       edges={["top"]}
     >
+      <StatusBar style="dark" />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -137,12 +257,13 @@ export default function UserScreen() {
         <View style={styles.profileContainer}>
           {/* Avatar & Info */}
           <View style={styles.profileHeader}>
-            <View style={styles.avatarContainer}>
-              {user.user_metadata?.avatar_url ? (
-                <Image
-                  source={{ uri: user.user_metadata.avatar_url }}
-                  style={styles.avatar}
-                />
+            <TouchableOpacity
+              style={styles.avatarContainer}
+              onPress={pickImage}
+              disabled={uploading}
+            >
+              {avatarUrl ? (
+                <Image source={{ uri: avatarUrl }} style={styles.avatar} />
               ) : (
                 <View style={styles.avatarPlaceholder}>
                   <ThemedText style={styles.avatarText}>
@@ -150,7 +271,15 @@ export default function UserScreen() {
                   </ThemedText>
                 </View>
               )}
-            </View>
+              {uploading && (
+                <View style={styles.uploadingOverlay}>
+                  <ActivityIndicator size="small" color="#FFF" />
+                </View>
+              )}
+              <View style={styles.editIconContainer}>
+                <ThemedText style={styles.editIcon}>📷</ThemedText>
+              </View>
+            </TouchableOpacity>
 
             <ThemedText type="title" style={styles.profileName}>
               {user.user_metadata?.display_name || user.email?.split("@")[0]}
@@ -161,9 +290,9 @@ export default function UserScreen() {
 
           {/* Profile Stats */}
           <View style={styles.statsContainer}>
-            <StatCard icon="📚" label="Bài học" value="12" />
-            <StatCard icon="✅" label="Quiz" value="8" />
-            <StatCard icon="⭐" label="Điểm" value="450" />
+            <StatCard icon="📚" label="Bài học" value="12" color="#4CAF50" />
+            <StatCard icon="✅" label="Quiz" value="8" color="#2196F3" />
+            <StatCard icon="⭐" label="Điểm" value="450" color="#FF9800" />
           </View>
 
           {/* Menu Items */}
@@ -171,21 +300,29 @@ export default function UserScreen() {
             <MenuItem
               icon="📊"
               title="Tiến độ học tập"
+              subtitle="Xem thống kê chi tiết"
+              iconBg="#E3F2FD"
               onPress={() => router.push("/summary")}
             />
             <MenuItem
               icon="👤"
               title="Thông tin cá nhân"
+              subtitle="Cập nhật hồ sơ"
+              iconBg="#FFF3E0"
               onPress={() => router.push("/profile")}
             />
             <MenuItem
               icon="ℹ️"
               title="Về chúng tôi"
+              subtitle="Tìm hiểu thêm về MLN111"
+              iconBg="#F3E5F5"
               onPress={() => router.push("/about")}
             />
             <MenuItem
               icon="📧"
               title="Liên hệ"
+              subtitle="Gửi phản hồi & hỗ trợ"
+              iconBg="#E8F5E9"
               onPress={() => router.push("/contact")}
             />
           </View>
@@ -229,15 +366,21 @@ function StatCard({
   icon,
   label,
   value,
+  color,
 }: {
   icon: string;
   label: string;
   value: string;
+  color: string;
 }) {
   return (
     <View style={styles.statCard}>
-      <ThemedText style={styles.statIcon}>{icon}</ThemedText>
-      <ThemedText style={styles.statValue}>{value}</ThemedText>
+      <View
+        style={[styles.statIconContainer, { backgroundColor: color + "20" }]}
+      >
+        <ThemedText style={styles.statIcon}>{icon}</ThemedText>
+      </View>
+      <ThemedText style={[styles.statValue, { color }]}>{value}</ThemedText>
       <ThemedText style={styles.statLabel}>{label}</ThemedText>
     </View>
   );
@@ -247,17 +390,33 @@ function StatCard({
 function MenuItem({
   icon,
   title,
+  subtitle,
+  iconBg,
   onPress,
 }: {
   icon: string;
   title: string;
+  subtitle?: string;
+  iconBg?: string;
   onPress: () => void;
 }) {
   return (
     <TouchableOpacity style={styles.menuItem} onPress={onPress}>
       <View style={styles.menuItemLeft}>
-        <ThemedText style={styles.menuIcon}>{icon}</ThemedText>
-        <ThemedText style={styles.menuTitle}>{title}</ThemedText>
+        <View
+          style={[
+            styles.menuIconContainer,
+            iconBg && { backgroundColor: iconBg },
+          ]}
+        >
+          <ThemedText style={styles.menuIcon}>{icon}</ThemedText>
+        </View>
+        <View style={styles.menuTextContainer}>
+          <ThemedText style={styles.menuTitle}>{title}</ThemedText>
+          {subtitle && (
+            <ThemedText style={styles.menuSubtitle}>{subtitle}</ThemedText>
+          )}
+        </View>
       </View>
       <ThemedText style={styles.menuArrow}>›</ThemedText>
     </TouchableOpacity>
@@ -387,6 +546,7 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     marginBottom: 16,
+    position: "relative",
   },
   avatar: {
     width: 100,
@@ -409,6 +569,33 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "bold",
     color: Colors.accentSoft,
+  },
+  editIconContainer: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: Colors.accent,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: Colors.surfaceAlt,
+  },
+  editIcon: {
+    fontSize: 16,
+  },
+  uploadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileName: {
     fontSize: 24,
@@ -433,26 +620,35 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.accentSoft,
     alignItems: "center",
-    gap: 4,
+    gap: 8,
+    shadowColor: Colors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  statIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 4,
   },
   statIcon: {
-    fontSize: 28,
+    fontSize: 24,
   },
   statValue: {
     fontSize: 24,
     fontWeight: "bold",
-    color: Colors.accent,
   },
   statLabel: {
     fontSize: 12,
     color: Colors.muted,
+    fontWeight: "500",
   },
   menuContainer: {
-    backgroundColor: Colors.surface,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: Colors.accentSoft,
-    overflow: "hidden",
+    gap: 12,
     marginBottom: 20,
   },
   menuItem: {
@@ -460,24 +656,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.surfaceAlt,
+    backgroundColor: Colors.surface,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.accent,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
   menuItemLeft: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    flex: 1,
+  },
+  menuIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.accentSoft,
   },
   menuIcon: {
-    fontSize: 20,
+    fontSize: 22,
+  },
+  menuTextContainer: {
+    flex: 1,
   },
   menuTitle: {
     fontSize: 16,
+    fontWeight: "600",
     color: Colors.text,
+    marginBottom: 2,
+  },
+  menuSubtitle: {
+    fontSize: 13,
+    color: Colors.muted,
   },
   menuArrow: {
     fontSize: 24,
     color: Colors.muted,
+    marginLeft: 8,
   },
   signOutButton: {
     backgroundColor: Colors.surface,
