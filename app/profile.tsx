@@ -4,31 +4,60 @@ import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import profileData from "@/data/profile.json";
 import { Stack, useRouter } from "expo-router";
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useEffect } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
-  const { user: profileUser, progress, achievements, recommendations } = profileData;
+  const { user, signOut, loading } = useAuth();
+  const {
+    user: profileUser,
+    progress,
+    achievements,
+    recommendations,
+  } = profileData;
+
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      Alert.alert("Yêu cầu đăng nhập", "Bạn cần đăng nhập để xem hồ sơ", [
+        {
+          text: "Đăng nhập",
+          onPress: () => router.replace("/auth"),
+        },
+        {
+          text: "Quay lại",
+          style: "cancel",
+          onPress: () => router.back(),
+        },
+      ]);
+    }
+  }, [user, loading]);
 
   const handleLogout = () => {
-    Alert.alert(
-      "Đăng xuất",
-      "Bạn có chắc muốn đăng xuất?",
-      [
-        { text: "Hủy", style: "cancel" },
-        {
-          text: "Đăng xuất",
-          style: "destructive",
-          onPress: async () => {
-            await signOut();
-            router.replace("/auth");
-          },
+    Alert.alert("Đăng xuất", "Bạn có chắc muốn đăng xuất?", [
+      { text: "Hủy", style: "cancel" },
+      {
+        text: "Đăng xuất",
+        style: "destructive",
+        onPress: async () => {
+          await signOut();
+          router.replace("/(tabs)");
         },
-      ]
-    );
+      },
+    ]);
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
@@ -48,14 +77,19 @@ export default function ProfileScreen() {
             <View style={styles.userCard}>
               <View style={styles.avatar}>
                 <ThemedText style={styles.avatarText}>
-                  {user ? user.email?.charAt(0).toUpperCase() : profileUser.name.charAt(0)}
+                  {user
+                    ? user.email?.charAt(0).toUpperCase()
+                    : profileUser.name.charAt(0)}
                 </ThemedText>
               </View>
               <ThemedText type="title" style={styles.userName}>
                 {user ? user.email : profileUser.name}
               </ThemedText>
               {user && (
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                <TouchableOpacity
+                  style={styles.logoutButton}
+                  onPress={handleLogout}
+                >
                   <ThemedText style={styles.logoutButtonText}>
                     Đăng xuất
                   </ThemedText>

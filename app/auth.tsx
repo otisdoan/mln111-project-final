@@ -7,6 +7,7 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -21,13 +22,14 @@ export default function AuthScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   /**
    * Handle Sign In / Sign Up
-   * 
+   *
    * Flow:
    * 1. Validate input
    * 2. Call signIn/signUp từ AuthContext
@@ -65,24 +67,24 @@ export default function AuthScreen() {
   };
 
   const handleGoogleLogin = async () => {
-    console.log('🔍 Google login button pressed');
+    console.log("🔍 Google login button pressed");
     setError("");
     setLoading(true);
 
     try {
-      console.log('🔍 Calling signInWithGoogle...');
+      console.log("🔍 Calling signInWithGoogle...");
       const { error } = await signInWithGoogle();
 
       if (error) {
-        console.error('❌ Google login error:', error.message);
+        console.error("❌ Google login error:", error.message);
         setError(error.message);
         Alert.alert("Lỗi đăng nhập Google", error.message);
       } else {
-        console.log('✅ Google login initiated successfully');
+        console.log("✅ Google login initiated successfully");
         // Success - AuthGuard sẽ tự động redirect
       }
     } catch (err: any) {
-      console.error('❌ Google login exception:', err);
+      console.error("❌ Google login exception:", err);
       setError(err.message);
       Alert.alert("Lỗi", err.message || "Không thể đăng nhập bằng Google");
     } finally {
@@ -101,7 +103,10 @@ export default function AuthScreen() {
         style={{ flex: 1, backgroundColor: Colors.surfaceAlt }}
         edges={["bottom"]}
       >
-        <ScrollView style={styles.container}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
           <ThemedView style={styles.section}>
             <View style={styles.authCard}>
               <ThemedText type="title" style={styles.title}>
@@ -124,11 +129,10 @@ export default function AuthScreen() {
                   <ThemedText style={styles.label}>Email</ThemedText>
                   <TextInput
                     style={styles.input}
-                    placeholder="you@example.com"
+                    placeholder="email@example.com"
                     placeholderTextColor="#999"
-                    keyboardType="email-address"
                     autoCapitalize="none"
-                    autoComplete="email"
+                    keyboardType="email-address"
                     value={email}
                     onChangeText={setEmail}
                     editable={!loading}
@@ -137,21 +141,26 @@ export default function AuthScreen() {
 
                 <View style={styles.formGroup}>
                   <ThemedText style={styles.label}>Mật khẩu</ThemedText>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="••••••••"
-                    placeholderTextColor="#999"
-                    secureTextEntry
-                    autoComplete="password"
-                    value={password}
-                    onChangeText={setPassword}
-                    editable={!loading}
-                  />
-                  {isSignUp && (
-                    <ThemedText style={styles.hint}>
-                      Tối thiểu 6 ký tự
-                    </ThemedText>
-                  )}
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={styles.passwordInput}
+                      placeholder="••••••••"
+                      placeholderTextColor="#999"
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
+                      editable={!loading}
+                    />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                      style={styles.eyeButton}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <ThemedText style={styles.eyeIcon}>
+                        {showPassword ? "👁️" : "👁️‍🗨️"}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
                 <TouchableOpacity
@@ -181,7 +190,10 @@ export default function AuthScreen() {
                   <ActivityIndicator color={Colors.text} />
                 ) : (
                   <>
-                    <ThemedText style={styles.googleIcon}>🔍</ThemedText>
+                    <Image
+                      source={require("@/assets/images/google-logo.png")}
+                      style={styles.googleIcon}
+                    />
                     <ThemedText style={styles.googleButtonText}>
                       Đăng nhập với Google
                     </ThemedText>
@@ -213,6 +225,8 @@ const styles = StyleSheet.create({
   section: {
     padding: 20,
     paddingTop: 40,
+    flex: 1,
+    justifyContent: "center",
   },
   authCard: {
     padding: 24,
@@ -225,17 +239,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 5,
+    maxWidth: 500,
+    width: "100%",
+    alignSelf: "center",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 8,
     color: Colors.primary,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
     color: Colors.muted,
     marginBottom: 24,
+    textAlign: "center",
   },
   form: {
     gap: 16,
@@ -256,6 +275,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: Colors.surface,
     color: Colors.text,
+  },
+  passwordContainer: {
+    position: "relative",
+  },
+  passwordInput: {
+    borderWidth: 2,
+    borderColor: Colors.accentSoft,
+    borderRadius: 14,
+    padding: 14,
+    paddingRight: 50,
+    fontSize: 16,
+    backgroundColor: Colors.surface,
+    color: Colors.text,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 14,
+    top: 14,
+    padding: 4,
+  },
+  eyeIcon: {
+    fontSize: 20,
   },
   loginButton: {
     backgroundColor: Colors.accent,
@@ -286,7 +327,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   googleIcon: {
-    fontSize: 20,
+    width: 20,
+    height: 20,
+    marginRight: 8,
   },
   googleButtonText: {
     fontSize: 16,

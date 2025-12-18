@@ -22,6 +22,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Trang chủ",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="house.fill" color={color} />
           ),
@@ -34,6 +35,16 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="magnifyingglass" color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="user"
+        options={{
+          title: "Người dùng",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="person.fill" color={color} />
+          ),
+          headerRight: undefined,
         }}
       />
     </Tabs>
