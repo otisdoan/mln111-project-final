@@ -3,7 +3,7 @@
  */
 
 import quickRepliesData from "@/data/quick-replies.json";
-import { generateResponse, validateQuestion } from "@/lib/ai/openrouter";
+import { generateResponse, validateQuestion } from "@/lib/ai/gemini";
 import { GREETING_MESSAGE } from "@/lib/ai/prompts";
 import {
   buildContextString,
